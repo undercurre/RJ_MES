@@ -1,0 +1,7 @@
+# 开发环境
+
+# 页面 title 前缀
+VUE_APP_TITLE=iMES 5.0管理平台
+# VUE_APP_API=http://192.168.18.48:58778/api/
+VUE_APP_API=http://47.107.170.153:58778/api/
+VUE_APP_BASE_IMG=http://47.107.170.153:58778

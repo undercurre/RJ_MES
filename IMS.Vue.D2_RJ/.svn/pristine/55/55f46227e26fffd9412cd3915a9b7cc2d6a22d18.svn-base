@@ -1,0 +1,45 @@
+# 所有环境默认
+
+# 页面 title 前缀
+VUE_APP_TITLE=IMS管理平台
+
+# 网络请求公用地址
+VUE_APP_API=http://192.168.18.251:58778/api/
+VUE_APP_BASE_IMG=http://192.168.18.251:58778
+
+#VUE_APP_API=http://47.107.170.153:58778/api/
+#VUE_APP_BASE_IMG=http://47.107.170.153:58778
+
+# 操作手册地址
+VUE_APP_DOCUMENT_URL=http://192.168.18.251:55089/
+
+# 帆软报表地址
+VUE_APP_FINE_REPORT_URL=http://192.168.18.251:55080/
+
+# 仓库地址
+VUE_APP_REPO=https://github.com/d2-projects/d2-admin-start-kit
+
+# 国际化配置
+VUE_APP_I18N_LOCALE=zh-chs
+VUE_APP_I18N_FALLBACK_LOCALE=en
+
+# element 颜色
+VUE_APP_ELEMENT_COLOR=#409EFF
+
+# 内外网开关 1 表示开启cdn加速  0 表示不开启cdn加速 （默认开启）
+VUE_APP_EXTRANET=0
+
+# 是否启用url参数登录 （默认不开启）
+VUE_APP_URL_LOGIN=0
+
+# 是否强制重定向 用于登录之后重定向回去之前的页面 （默认不开启）
+VUE_APP_STRONG_REDIRECT=0
+
+# 是否启动删除所有数据 （这个定义来玩的）
+VUE_APP_IS_BOOM_SYS=0
+
+# 美联BOM比对开关
+VUE_APP_IS_MEILIAN_BOM=1
+
+# 路由添加1.0单页面
+VUE_APP_SINGLE_SHOW=0

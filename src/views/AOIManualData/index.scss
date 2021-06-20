@@ -1,0 +1,307 @@
+.AOIManualData #contentDiv {
+  height: calc(100% - 70px);
+}
+
+.AOIManualData {
+  min-height: 100vh;
+  min-width: 100vw;
+  overflow-x: hidden;
+  color: white;
+  font-family: 'Microsoft YaHei';
+  background-color: #040f3c;
+  background-size: 100% 100%;
+}
+
+.text-overflow {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: block;
+  /*inline-block*/
+}
+
+.kanban-wo-info {
+  text-align: center; 
+  font-size: 16px;
+  padding: 10px 0 15px 0;
+}
+
+.kanban-wo-info-panel {
+  position: relative;
+  border: 1px solid #54dcf2;
+  width: 100%;
+  height: 100%;
+  line-height: 40px;
+  height: 40px;
+}
+
+.borderl {
+  border: 1px solid #54dcf2;
+}
+
+.meixiaoshichanneng {
+  height: 600px;
+  width: 100%;
+  padding: 0 10px;
+}
+
+.gongdanhegelv {
+  height: 295px;
+  width: 100%;
+  padding: 0 10px;
+}
+
+.gongdantop5 {
+  height: 300px;
+  width: 1005;
+  padding: 0 10px;
+}
+
+
+
+.div-title {
+  text-align: right;
+  padding-right: 0;
+  font-weight: bold;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.div-value {
+  text-align: left;
+  padding-left: 0;
+}
+
+.AOIManualData .container-fluid {
+  width: 100%;
+  height: 100%;
+  padding: 0 20px;
+}
+
+.AOIManualData .kanban-panel-bg {
+  position: relative;
+  border: 1px solid #54dcf2;
+}
+
+.AOIManualData .kanban-panel-bg span.border-span,
+.AOIManualData .kanban-wo-info-panel span.border-span {
+  display: block;
+  position: absolute;
+  width: 35px;
+  height: 35px;
+}
+
+.AOIManualData .kanban-panel-bg span.border-span-m,
+.AOIManualData .kanban-wo-info-panel span.border-span-m {
+  display: block;
+  position: absolute;
+  width: 16px;
+  height: 16px;
+}
+
+.AOIManualData .kanban-panel-bg span.top-left,
+.AOIManualData .kanban-wo-info-panel span.top-left {
+  top: -4px;
+  left: -4px;
+  border-top: 3px solid #54dcf2;
+  border-left: 3px solid #54dcf2;
+}
+
+.AOIManualData .kanban-panel-bg span.top-right,
+.AOIManualData .kanban-wo-info-panel span.top-right {
+  top: -4px;
+  right: -4px;
+  border-top: 3px solid #54dcf2;
+  border-right: 3px solid #54dcf2;
+}
+
+.AOIManualData .kanban-panel-bg span.bottom-left,
+.AOIManualData .kanban-wo-info-panel span.bottom-left {
+  bottom: -4px;
+  left: -4px;
+  border-bottom: 3px solid #54dcf2;
+  border-left: 3px solid #54dcf2;
+}
+
+.AOIManualData .kanban-panel-bg span.bottom-right,
+.AOIManualData .kanban-wo-info-panel span.bottom-right {
+  bottom: -4px;
+  right: -4px;
+  border-bottom: 3px solid #54dcf2;
+  border-right: 3px solid #54dcf2;
+}
+
+.AOIManualData .kanban-title {
+  text-align: center;
+  font-size: 25px;
+  height: 70px;
+  line-height: 70px;
+  background: url('~@/assets/images/header_bg.png') center center no-repeat;
+  background-size: cover;
+}
+
+.AOIManualData .screen-span {
+  height: 50px;
+  width: 80px;
+}
+
+.AOIManualData .kanban-title-panel {
+  height: 100%;
+  color: #00ffff;
+}
+
+.AOIManualData .kanban-wo-info {
+  text-align: center;
+  font-size: 16px;
+  padding: 10px 15px 15px 15px;
+}
+
+.AOIManualData .kanban-wo-info-panel {
+  position: relative;
+  border: 1px solid #54dcf2;
+  width: 100%;
+  // height: 100%;
+  line-height: 40px;
+}
+
+.AOIManualData .kanban-wo-site-panel {
+  height: 100%;
+}
+
+.AOIManualData .kanban-panel-title {
+  line-height: 50px;
+  font-size: 18px;
+  font-weight: bold;
+  color: white;
+  padding-left: 10px;
+  display: block;
+  height: 50px;
+  text-align: left;
+}
+
+.AOIManualData .kanban-top-defect-panel {
+  height: 100%;
+}
+
+.AOIManualData .swiper-pagination-bullet {
+  background: #00ffff;
+}
+
+.AOIManualData .swiper-container-horizontal>.swiper-pagination-bullets,
+.AOIManualData .swiper-pagination-custom,
+.AOIManualData .swiper-pagination-fraction {
+  bottom: 0px;
+}
+
+.AOIManualData .titleTable {
+  width: 100%;
+  font-size: 18px;
+  table-layout: fixed;
+}
+
+.AOIManualData .titleTable tr {
+  height: 50px;
+  line-height: 50px;
+  border-bottom: 1px solid #00ffff;
+}
+
+.AOIManualData .titleTable td {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.AOIManualData .tdTitle {
+  width: 12%;
+  text-align: right;
+}
+
+.AOIManualData .tdValueL {
+  width: 25%;
+  text-align: left;
+}
+
+.AOIManualData .tdValueR {
+  width: 51%;
+  text-align: left;
+}
+
+.titlex {
+  font-size: 16px;
+  color: #fff;
+  font-weight: bold;
+  height: 36px;
+  display: flex;
+  align-items: center;
+}
+
+#meixiaoshichanneng {
+  height: calc(600px - 38px);
+}
+
+#gongdanhegelv {
+  height: calc(295px - 38px);
+}
+
+#jinrihegelv {
+  height: calc(295px - 38px);
+}
+
+#gongdantop5 {
+  height: calc(300px - 38px);
+}
+
+#lishizuoyejilu {
+  height: calc(300px - 39px);
+}
+
+#jinritop5 {
+  height: calc(300px - 38px);
+}
+
+.x-btnx {
+  width: 48%;
+  height: 32px;
+  background: rgb(233, 254, 230);
+  color: blue;
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.x-btnx:hover {
+  background: rgb(233, 254, 230, .9);
+}
+
+.x-btnl {
+  width: 100%;
+  height: 32px;
+  background: rgb(233, 254, 230);
+  color: blue;
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  justify-content: center;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.x-btnl:hover {
+  background: rgb(233, 254, 230, .9);
+}
+
+.his-item {
+  background: rgb(17, 32, 91);
+  color: #fff;
+  line-height: 2.2;
+  font-size: 14px;
+  padding: 0 10px;
+  margin-top: 3px;
+}
+
+#lishizuoyejilu {
+  overflow: auto;
+}

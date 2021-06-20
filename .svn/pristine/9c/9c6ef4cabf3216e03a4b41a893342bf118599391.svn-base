@@ -1,0 +1,174 @@
+// 布局组件
+.custom-container-component {
+  @extend %full;
+  overflow: hidden;
+  // 填充式布局组件
+  .custom-container-full {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    bottom: 0px;
+    left: 0px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    .custom-container-full__header {
+      padding: 10px 20px;
+      border-bottom: 1px solid #cfd7e5;
+      background: #FFF;
+    }
+    .custom-container-full__body {
+      flex-grow: 1;
+      height: 100%;
+      padding: 10px 20px;
+      overflow: auto;
+      position: relative;
+    }
+    .custom-container-full__footer {
+      padding: 10px 20px;
+      border-top: 1px solid #cfd7e5;
+      background: #FFF;
+    }
+  }
+  // 填充式布局组件 - 滚动优化
+  .custom-container-full-bs {
+    position: absolute;
+    top: 0px;
+    right: 20px;
+    bottom: 0px;
+    left: 0px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    .custom-container-full-bs__header {
+      padding: 20px;
+    }
+    .custom-container-full-bs__body {
+      flex-grow: 1;
+      overflow: hidden;
+      position: relative;
+      .custom-container-full-bs__body-wrapper-inner {
+        padding: 20px;
+        position: relative;
+      }
+    }
+    .custom-container-full-bs__footer {
+      padding: 20px;
+    }
+  }
+  // 隐形布局组件
+  .custom-container-ghost {
+    position: absolute;
+    top: 0px;
+    right: 20px;
+    bottom: 0px;
+    left: 0px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    .custom-container-ghost__header {
+      padding: 20px;
+      border-bottom-left-radius: 4px;
+      border-bottom-right-radius: 4px;
+    }
+    .custom-container-ghost__body {
+      flex-grow: 1;
+      overflow: auto;
+      position: relative;
+    }
+    .custom-container-ghost__footer {
+      padding: 20px;
+      border-top-left-radius: 4px;
+      border-top-right-radius: 4px;
+    }
+  }
+  // 隐形布局组件 - 滚动优化
+  .custom-container-ghost-bs {
+    position: absolute;
+    top: 0px;
+    right: 20px;
+    bottom: 0px;
+    left: 0px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    .custom-container-ghost-bs__header {
+      padding: 20px;
+      border-bottom-left-radius: 4px;
+      border-bottom-right-radius: 4px;
+    }
+    .custom-container-ghost-bs__body {
+      flex-grow: 1;
+      overflow: hidden;
+      position: relative;
+    }
+    .custom-container-ghost-bs__footer {
+      padding: 20px;
+      border-top-left-radius: 4px;
+      border-top-right-radius: 4px;
+    }
+  }
+  // 卡片式布局组件
+  .custom-container-card {
+    position: absolute;
+    top: 0px;
+    right: 20px;
+    bottom: 0px;
+    left: 0px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    .custom-container-card__header {
+      padding: 20px;
+    }
+    .custom-container-card__body {
+      flex-grow: 1;
+      overflow: auto;
+      .custom-container-card__body-card {
+        position: relative;
+        margin-bottom: 20px;
+        padding: 20px;
+        border-bottom-left-radius: 4px;
+        border-bottom-right-radius: 4px;
+      }
+    }
+    .custom-container-card__footer {
+      padding: 20px;
+      border-top-left-radius: 4px;
+      border-top-right-radius: 4px;
+    }
+  }
+  // 卡片式布局组件 - 滚动优化
+  .custom-container-card-bs {
+    position: absolute;
+    top: 0px;
+    right: 20px;
+    bottom: 0px;
+    left: 0px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    .custom-container-card-bs__header {
+      padding: 20px;
+    }
+    .custom-container-card-bs__body {
+      position: relative;
+      flex-grow: 1;
+      overflow: hidden;
+      .custom-container-card-bs__body-wrapper-inner {
+        padding-bottom: 20px;
+      }
+      .custom-container-card-bs__body-card {
+        position: relative;
+        padding: 20px;
+        border-bottom-left-radius: 4px;
+        border-bottom-right-radius: 4px;
+      }
+    }
+    .custom-container-card-bs__footer {
+      padding: 20px;
+      border-top-left-radius: 4px;
+      border-top-right-radius: 4px;
+    }
+  }
+}

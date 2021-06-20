@@ -1,0 +1,171 @@
+.AoiAndSpiReport #contentDiv {
+  height: calc(100% - 70px);
+}
+
+.AoiAndSpiReport {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0;
+  overflow: hidden;
+  color: white;
+  font-family: 'Microsoft YaHei';
+  background-color: #040f3c;
+  background-size: 100% 100%;
+}
+
+.AoiAndSpiReport .container-fluid {
+  width: 100%;
+  height: 100%;
+  padding: 0 20px;
+}
+
+.AoiAndSpiReport .kanban-panel-bg {
+  position: relative;
+  border: 1px solid #54dcf2;
+}
+
+.AoiAndSpiReport .kanban-panel-bg span.border-span,
+.AoiAndSpiReport .kanban-wo-info-panel span.border-span {
+  display: block;
+  position: absolute;
+  width: 35px;
+  height: 35px;
+}
+
+.AoiAndSpiReport .kanban-panel-bg span.border-span-m,
+.AoiAndSpiReport .kanban-wo-info-panel span.border-span-m {
+  display: block;
+  position: absolute;
+  width: 16px;
+  height: 16px;
+}
+
+.AoiAndSpiReport .kanban-panel-bg span.top-left,
+.AoiAndSpiReport .kanban-wo-info-panel span.top-left {
+  top: -4px;
+  left: -4px;
+  border-top: 3px solid #54dcf2;
+  border-left: 3px solid #54dcf2;
+}
+
+.AoiAndSpiReport .kanban-panel-bg span.top-right,
+.AoiAndSpiReport .kanban-wo-info-panel span.top-right {
+  top: -4px;
+  right: -4px;
+  border-top: 3px solid #54dcf2;
+  border-right: 3px solid #54dcf2;
+}
+
+.AoiAndSpiReport .kanban-panel-bg span.bottom-left,
+.AoiAndSpiReport .kanban-wo-info-panel span.bottom-left {
+  bottom: -4px;
+  left: -4px;
+  border-bottom: 3px solid #54dcf2;
+  border-left: 3px solid #54dcf2;
+}
+
+.AoiAndSpiReport .kanban-panel-bg span.bottom-right,
+.AoiAndSpiReport .kanban-wo-info-panel span.bottom-right {
+  bottom: -4px;
+  right: -4px;
+  border-bottom: 3px solid #54dcf2;
+  border-right: 3px solid #54dcf2;
+}
+
+.AoiAndSpiReport .kanban-title {
+  text-align: center;
+  font-size: 25px;
+  height: 70px;
+  line-height: 70px;
+  background: url('../../../assets/images/header_bg.png') center center no-repeat;
+  background-size: cover;
+}
+
+.AoiAndSpiReport .screen-span {
+  height: 50px;
+  width: 80px;
+}
+
+.AoiAndSpiReport .kanban-title-panel {
+  height: 100%;
+  color: #00ffff;
+}
+
+.AoiAndSpiReport .kanban-wo-info {
+  text-align: center;
+  font-size: 16px;
+  height: 185px;
+  padding: 10px 15px 20px 15px;
+}
+
+.AoiAndSpiReport .kanban-wo-info-panel {
+  position: relative;
+  border: 1px solid #54dcf2;
+  width: 100%;
+  height: 100%;
+  line-height: 40px;
+}
+
+.AoiAndSpiReport .kanban-wo-site-panel {
+  height: 100%;
+}
+
+.AoiAndSpiReport .kanban-panel-title {
+  line-height: 50px;
+  font-size: 18px;
+  font-weight: bold;
+  color: white;
+  padding-left: 10px;
+  display: block;
+  height: 50px;
+  text-align: left;
+}
+
+.AoiAndSpiReport .kanban-top-defect-panel {
+  height: 100%;
+}
+
+.AoiAndSpiReport .swiper-pagination-bullet {
+  background: #00ffff;
+}
+
+.AoiAndSpiReport .swiper-container-horizontal>.swiper-pagination-bullets,
+.AoiAndSpiReport .swiper-pagination-custom,
+.AoiAndSpiReport .swiper-pagination-fraction {
+  bottom: 0px;
+}
+
+.AoiAndSpiReport .titleTable {
+  width: 100%;
+  font-size: 18px;
+  table-layout: fixed;
+}
+
+.AoiAndSpiReport .titleTable tr {
+  height: 50px;
+  line-height: 50px;
+  border-bottom: 1px solid #00ffff;
+}
+
+.AoiAndSpiReport .titleTable td {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.AoiAndSpiReport .tdTitle {
+  width: 12%;
+  text-align: right;
+}
+
+.AoiAndSpiReport .tdValueL {
+  width: 25%;
+  text-align: left;
+}
+
+.AoiAndSpiReport .tdValueR {
+  width: 51%;
+  text-align: left;
+}

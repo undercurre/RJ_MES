@@ -1,0 +1,351 @@
+﻿@charset "utf-8";
+
+html {
+	width: 100%;
+	height: 100%;
+}
+/*通用样式*/
+body,
+ul,
+li,
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+dl,
+dt,
+dd {
+	margin: 0;
+	padding: 0;
+}
+
+body {
+	height: 100%;
+}
+
+.col-row {
+	padding: 0;
+	height: 100%;
+}
+
+.img-pn {
+	position: relative;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%,-50%);
+	max-height:100%;
+	max-width:100%;
+}
+.img-pn-des {
+	color: floralwhite;
+	background: rgba(0,0,0,0.5);
+	width: 100%;
+	height: 100%;
+	display: none;
+	overflow: hidden;
+	position: absolute;
+	z-index: 99;
+	left: 0;
+	top: 0;
+	font-size: 14px;
+	padding: 5px;
+}
+
+/*.pic-pn-div:hover .img-pn-des {
+	display: block;
+}*/
+
+ul,
+li {
+	list-style: none;
+}
+
+a:link,
+a:visited,
+a:active {
+	text-decoration: none;
+}
+
+body {
+	width: 100%;
+	height: 100%;
+	color: white;
+	font-family: 'Microsoft YaHei';
+	background: #040f3c;
+}
+
+.container-fluid {
+	width: 100%;
+	height: 100%;
+	padding: 0 20px;
+}
+
+.header-title {
+	height: 50px;
+	line-height: 50px;
+	position: relative;
+	font-size: 20px;
+	color: #00ffff;
+	text-align: center;
+	background: url('../../../assets/images/header_bg.png') center center no-repeat;
+	background-size: cover;
+}
+
+.wo-info {
+	text-align: center;
+	font-size: 14px;
+	height: 60px;
+	line-height: 35px;
+	padding: 10px 0 15px 0;
+}
+
+.main {
+	padding: 0 30px 30px;
+}
+
+.cent-area {
+	float: left;
+	width: 78%;
+}
+
+.area-left {
+	float: left;
+	width: 35%;
+	padding: 0 10px 0 0;
+}
+
+.area-middle {
+	float: left;
+	width: 65%;
+	padding: 0 10px;
+}
+
+.area-bottom {
+	float: left;
+	width: 100%;
+	padding: 0 10px 0 0;
+}
+
+.centpic {
+	width: 33.3%;
+	float: left;
+	padding: 2px;
+	/* border: 1px solid #54dcf2; */
+}
+
+.pic_border1 {
+	border-right: 1px solid #54dcf2;
+	border-bottom: 1px solid #54dcf2;
+}
+
+.pic_border2 {
+	border-bottom: 1px solid #54dcf2;
+}
+
+.pic_border3 {
+	border-right: 1px solid #54dcf2;
+}
+
+.main-right {
+	float: left;
+	width: 22%;
+	padding: 0 0 10px 10px;
+}
+
+
+.border-container {
+	position: relative;
+	border: 1px solid #54dcf2;
+}
+
+	.border-container span.border-span {
+		display: block;
+		position: absolute;
+		width: 35px;
+		height: 35px;
+	}
+
+	.border-container span.border-span-m {
+		display: block;
+		position: absolute;
+		width: 16px;
+		height: 16px;
+	}
+
+	.border-container span.top-left {
+		top: -4px;
+		left: -4px;
+		border-top: 3px solid #54dcf2;
+		border-left: 3px solid #54dcf2;
+	}
+
+	.border-container span.top-right {
+		top: -4px;
+		right: -4px;
+		border-top: 3px solid #54dcf2;
+		border-right: 3px solid #54dcf2;
+	}
+
+	.border-container span.bottom-left {
+		bottom: -4px;
+		left: -4px;
+		border-bottom: 3px solid #54dcf2;
+		border-left: 3px solid #54dcf2;
+	}
+
+	.border-container span.bottom-right {
+		bottom: -4px;
+		right: -4px;
+		border-bottom: 3px solid #54dcf2;
+		border-right: 3px solid #54dcf2;
+	}
+
+.name-title {
+	font-size: 20px;
+	color: #00ffff;
+}
+
+.name-title-m {
+	font-size: 16px;
+	color: #d9edf7;
+}
+
+#dormitorydetail {
+	height: 135px;
+}
+
+#graduateyear {
+	height: 120px;
+}
+
+.three-pie {
+	border-top: 1px solid #2c768a;
+	margin: -10px;
+	margin-top: 10px;
+}
+
+.teacher-pie {
+	border-bottom: 1px solid #2c768a;
+	margin: -10px;
+	margin-bottom: 0;
+}
+
+	.three-pie li,
+	.teacher-pie li {
+		float: left;
+		width: 50%;
+		border-right: 1px solid #2c768a;
+	}
+
+		.teacher-pie li .name-title {
+			padding-left: 10px;
+			padding-top: 10px;
+		}
+
+		.three-pie li:last-child,
+		.teacher-pie li:last-child {
+			border-right: none;
+		}
+
+#sexrate,
+#nationarate,
+#householdrate {
+	height: 266px;
+}
+
+.number-show {
+	position: absolute;
+	top: 20%;
+	right: 5%;
+}
+
+	.number-show span.span-name {
+		font-size: 14px;
+		color: #fffd51;
+	}
+
+	.number-show span.span-number-show {
+		font-size: 18px;
+		color: #54b5b5;
+		font-style: italic;
+	}
+
+	.number-show li {
+		line-height: 25px;
+	}
+
+#teacherrate,
+#courserate,
+#professionrate {
+	height: 200px;
+}
+
+#agelist {
+	height: 130px;
+}
+
+#changedetail {
+	height: 229px;
+}
+
+.table-kingdargen {
+	margin-top: 6px;
+	text-align: center;
+	margin-bottom: 0;
+}
+
+	.table-kingdargen > thead > tr > th {
+		border-bottom: 1px solid #0f4075;
+		padding: 2px 8px;
+		text-align: center;
+		color: #419aff;
+		font-size: 12px;
+		font-weight: normal;
+		border-top: 1px solid #0f4075 !important;
+	}
+
+	.table-kingdargen tbody tr td {
+		padding: 1px 8px;
+		font-size: 12px;
+		border: none;
+		color: #fff;
+	}
+
+	.table-kingdargen tbody tr:nth-child(2n) {
+		background: #1d2a42;
+	}
+
+	.table-kingdargen tbody tr:hover {
+		background: #1d2a42;
+	}
+
+	.table-kingdargen tbody tr td:nth-child(2) {
+		color: #e9aa00;
+	}
+
+	.table-kingdargen tbody tr td:nth-child(3) {
+		color: #53bf18;
+	}
+
+	.table-kingdargen tbody tr td:nth-child(4) {
+		color: #f9504a;
+	}
+
+	.table-kingdargen tbody tr td:nth-child(5) {
+		color: #12f0e9;
+	}
+
+#juniorservice {
+	height: 190px;
+}
+
+#edubalance {
+	height: 120px;
+}
+
+* {
+	box-sizing: border-box;
+}

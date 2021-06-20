@@ -1,0 +1,291 @@
+html {
+ width: 100%;
+ height: 100%;
+}
+
+.EquipCheck{
+ position: absolute;
+ height: 100%;
+ width: 100%;
+ top:0;
+ left: 0;
+ overflow-y: auto;
+ color: white;
+ font-family: "Microsoft YaHei";
+ background-color: #040f3c;
+ background-size: 100% 100%;
+}
+.container-fluid {
+ width: 100%;
+ height: 100%;
+ padding: 0 20px;
+ box-sizing: border-box;
+}
+
+.kanban-wo-info-panel2 span.border-span,
+.kanban-wo-info-panel span.border-span {
+ display: block;
+ position: absolute;
+ width: 35px;
+ height: 35px;
+}
+
+.kanban-wo-info-panel2 span.border-span-m,
+.kanban-wo-info-panel span.border-span-m {
+ display: block;
+ position: absolute;
+ width: 16px;
+ height: 16px;
+}
+
+.kanban-wo-info-panel2 span.top-left,
+.kanban-wo-info-panel span.top-left {
+ top: -4px;
+ left: -4px;
+ border-top: 3px solid #54dcf2;
+ border-left: 3px solid #54dcf2;
+}
+
+.kanban-wo-info-panel2 span.top-right,
+.kanban-wo-info-panel span.top-right {
+ top: -4px;
+ right: -4px;
+ border-top: 3px solid #54dcf2;
+ border-right: 3px solid #54dcf2;
+}
+
+.kanban-wo-info-panel2 span.bottom-left,
+.kanban-wo-info-panel span.bottom-left {
+ bottom: -4px;
+ left: -4px;
+ border-bottom: 3px solid #54dcf2;
+ border-left: 3px solid #54dcf2;
+}
+
+.kanban-wo-info-panel2 span.bottom-right,
+.kanban-wo-info-panel span.bottom-right {
+ bottom: -4px;
+ right: -4px;
+ border-bottom: 3px solid #54dcf2;
+ border-right: 3px solid #54dcf2;
+}
+
+.kanban-title {
+ text-align: center;
+ font-size: 25px;
+ height: 70px;
+ line-height: 70px;
+ /* /images/header_bg.png */
+ background: url('../../../assets/images/header_bg.png') center center no-repeat;
+ background-size: cover;
+}
+
+.kanban-title-panel {
+ height: 100%;
+ color: #00ffff;
+}
+
+.kanban-wo-info2 {
+ text-align: center;
+ font-size: 16px;
+ height: 70px;
+ padding: 10px;
+}
+
+.kanban-wo-info-panel2 {
+ position: relative;
+ border: 1px solid #54dcf2;
+ width: 100%;
+ height: 100%;
+ line-height: 35px;
+}
+
+.kanban-wo-info2 .div-title {
+ text-align: right;
+ padding-right: 0;
+ white-space: nowrap;
+ overflow: hidden;
+ text-overflow: ellipsis;
+}
+
+.kanban-wo-info2 .div-value {
+ text-align: left;
+ padding-left: 0;
+}
+
+.kanban-wo-info {
+  text-align: center; 
+  font-size: 16px;
+  padding: 10px 0 15px 0;
+}
+
+.kanban-wo-info-panel {
+ position: relative;
+ border: 1px solid #54dcf2;
+ width: 100%;
+ height: 100%;
+ line-height: 40px;
+}
+
+.kanban-table {
+ width: 100%;
+ table-layout: fixed;
+}
+
+.kanban-table tr {
+ line-height: 40px;
+ height: 40px;
+}
+
+.kanban-table td {
+ white-space: nowrap;
+ overflow: hidden;
+ text-overflow: ellipsis;
+}
+
+.kanban-panel-title {
+ font-size: 16px;
+ font-weight: bold;
+ padding-left: 20px;
+ height: 46px;
+ line-height: 46px;
+ text-align: left;
+ border-bottom: 1px dotted #54dcf2;
+}
+
+.table-title {
+ text-align: right;
+}
+
+.table-value {
+ text-align: left;
+}
+
+.table-img-div {
+ width: 100%;
+ height: 100%;
+ background-repeat: no-repeat;
+ background-position: center;
+ background-size: contain;
+}
+
+.table-list {
+ width: 100%;
+ font-size: 14px;
+ table-layout: fixed;
+}
+
+.table-list td,
+th {
+ white-space: nowrap;
+ overflow: hidden;
+ text-overflow: ellipsis;
+}
+
+.table-list th {
+ text-align: center;
+ font-size: 15px;
+}
+
+.table-list tr:nth-child(2n) {
+ background-color: #2b2b5b;
+}
+
+.swiper-pagination-bullet {
+ background: #00ffff;
+}
+
+.stamper {
+ right: 240px;
+ bottom: 40px;
+ background-color: rgba(0, 0, 0, 0);
+ position: absolute;
+ width: 160px;
+ height: 70px;
+ line-height: 60px;
+ text-align: center;
+ font-size: 40px;
+ font-weight: 900;
+ font-family: "新宋体";
+ transform: rotate(-20deg);
+ border-radius: 50% / 50%;
+ border: 5px solid rgba(18, 233, 35, 0.8);
+ color: rgba(18, 233, 35, 0.8);
+ /* display: none; */
+}
+#imgList{
+ display: flex;
+   justify-content: space-around;
+   height: 87%;
+}
+.ImgDiv {
+ /* float: left; */
+ position: relative;
+ cursor: pointer;
+ padding: 0px;
+ margin-left: 5px;
+ width: 100%;
+ height: 100%;
+ /* height: 270px; */
+ /* line-height: 270px; */
+}
+.ImgDivClass{
+  /* margin-left: 5px;
+  width: 474px;
+  height: 299px;
+  line-height: 299px; */
+  background-color: rgb(43, 43, 91);
+}
+.CheckImg {
+ max-width: 100%;
+ max-height: 100%;
+ padding: 0px;
+ border-bottom: 6px solid red;
+}
+
+/*.img_cur {
+     border: 3px solid #00ffff;
+   }*/
+
+.statusCss {
+ text-align: center;
+ margin-top: 5px;
+ width: 100%;
+ height: 30px;
+ line-height: 30px;
+}
+
+.statusCss table {
+ margin: 0px auto;
+}
+
+.statusCss td {
+ padding-left: 10px;
+}
+
+.statusBack {
+ width: 26px;
+ height: 20px;
+ border-radius: 30% / 20%;
+}
+
+.block {
+  width: 100%;
+  height: calc((100vh - 70px - 67px) / 3 - 15px);
+  box-sizing: border-box;
+  margin-bottom: 15px;
+}
+
+.block-center {
+  width: 100%;
+  height: calc((100vh - 70px - 67px) / 2 - 14px);
+  box-sizing: border-box;
+  margin-bottom: 15px;
+}
+
+.tit-btn {
+  color:#00ffff;font-size:15px;text-decoration: none;font-weight: bold;
+  display: block;
+  margin-bottom: 10px;
+  line-height: 1.5;
+}

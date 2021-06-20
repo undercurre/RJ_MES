@@ -1,0 +1,820 @@
+<template>
+  <d2-container>
+    <template slot="header">
+      <custom-container-header>
+        <el-input
+          v-model="formData.Key"
+          style="width: 200px"
+          clearable
+          :placeholder="''"
+        />
+        <el-button
+          type="primary"
+          icon="el-icon-search"
+          @click.prevent="searchClick"
+          >{{ $t("plbd.hd_sf") }}</el-button
+        >
+        <el-button
+          type="success"
+          @click="insertEvent(null)"
+          icon="el-icon-plus"
+          >{{ $t("plbd.add") }}</el-button
+        >
+      </custom-container-header>
+    </template>
+    <!-- 表格 -->
+    <div class="table-container">
+      <vxe-table
+        ref="xTable"
+        border
+        resizable
+        height="100%"
+        size="medium"
+        align="center"
+        highlight-current-row
+        highlight-hover-row
+        show-overflow
+        auto-resize
+        keep-source
+        stripe
+        :loading="loading"
+        :data="mainTable"
+        :mouse-config="{ selected: true }"
+        :edit-config="{ trigger: 'click', mode: 'row', showStatus: true }"
+        :radio-config="{ labelField: 'name', trigger: 'row' }"
+        :checkbox-config="{ checkField: 'checked', trigger: 'row' }"
+      >
+        <vxe-table-column
+          min-width="150"
+          field="REPORT_NAME"
+          :title="'报表名称'"
+          :edit-render="{ name: '$input', props: { readonly: true } }"
+        />
+        <vxe-table-column
+          min-width="150"
+          field="CREATE_DATE"
+          :title="'创建日期'"
+          :edit-render="{ name: '$input', props: { readonly: true } }"
+        />
+        <vxe-table-column
+          min-width="150"
+          field="EDIT_DATE"
+          :title="'最后修改日期'"
+          :edit-render="{ name: '$input', props: { readonly: true } }"
+        />
+        <vxe-table-column
+          min-width="150"
+          field="REMARK"
+          :title="'备注'"
+          :edit-render="{ name: '$input', props: { readonly: true } }"
+        />
+        <vxe-table-column
+          :title="$t('as_cfe.tb_og')"
+          min-width="150"
+          align="center"
+          fixed="right"
+        >
+          <template v-slot="{ row }">
+            <el-button type="primary" @click="editRow(row, row.$index)">{{
+              $t("publics.btn.edit")
+            }}</el-button>
+            <el-button
+              type="danger"
+              @click="removeClick(row)"
+              >{{ $t("as_cfe.tb_rm") }}</el-button
+            >
+          </template>
+        </vxe-table-column>
+      </vxe-table>
+    </div>
+    <!-- 分页 -->
+    <template slot="footer">
+      <el-pagination
+        :current-page="formData.Page"
+        :page-size="formData.Limit"
+        :page-sizes="[15, 25, 35, 45]"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="totalPage"
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+      />
+    </template>
+    <!-- 新增 -->
+    <el-dialog
+      class="x-xdia"
+      v-dialogDrag
+      :title="dialogText"
+      :visible.sync="dialogVisible"
+      width="80%"
+      :close-on-click-modal="false"
+    >
+      <el-steps space :active="activeIndex" finish-status="success">
+        <el-step title="步骤 1"></el-step>
+        <el-step title="步骤 2"></el-step>
+        <el-step title="步骤 3"></el-step>
+      </el-steps>
+      <div style="float: right; margin-bottom: 10px">
+        <el-button @click="lastClick">上一步</el-button>
+        <el-button @click="nextClick">下一步</el-button>
+      </div>
+      <div style="margin-top: 50px">
+        <div v-show="activeIndex === 1">
+          <el-input
+            style="width: 100%; margin-bottom: 10px"
+            v-model="modifyForm.MstItem.REPORT_NAME"
+            :placeholder="'请输入报表名称'"
+            clearable
+          />
+          <el-input
+            style="width: 100%"
+            type="textarea"
+            :autosize="{ minRows: 20 }"
+            v-model="modifyForm.MstItem.SQL"
+            :placeholder="'请输入sql语句配置'"
+            clearable
+          />
+        </div>
+        <div style="margin-bottom: 10px" v-show="activeIndex === 2">
+          <el-input
+            style="width: 75%"
+            v-model="modifyForm.MstItem.table_name"
+            :placeholder="'请输入主表名称'"
+            clearable
+          />
+          <el-button type="success" @click="GenerateField">生成字段</el-button>
+          <el-button type="primary" @click="getTitle">获取标题</el-button>
+        </div>
+        <div style="margin-bottom: 10px" v-show="activeIndex === 3">
+          <el-button
+            v-show="activeIndex === 3"
+            type="primary"
+            @click="addClick(-1)"
+            >{{ $t("publics.btn.add") }}</el-button
+          >
+        </div>
+        <!-- 第二步 -->
+        <vxe-table
+          v-show="activeIndex === 2"
+          ref="generateTable"
+          border
+          resizable
+          height="350px"
+          size="medium"
+          align="center"
+          highlight-current-row
+          highlight-hover-row
+          show-overflow
+          auto-resize
+          keep-source
+          stripe
+          :loading="loading2"
+          :data="generateMainTable"
+          :mouse-config="{ selected: true }"
+          :edit-config="{ trigger: 'click', mode: 'row', showStatus: true }"
+          :radio-config="{ labelField: 'name', trigger: 'row' }"
+          :checkbox-config="{ checkField: 'checked', trigger: 'row' }"
+        >
+          <vxe-table-column
+            sortable
+            width="80"
+            field="ORD_IDX"
+            :title="'序号'"
+            :edit-render="{ name: 'input', props: {} }"
+          />
+          <vxe-table-column
+            min-width="150"
+            field="COLUMN_NAME"
+            :title="'报表名称'"
+            :edit-render="{ name: 'input', props: { readonly: true } }"
+          />
+          <vxe-table-column
+            min-width="150"
+            field="COLUMN_CAPTION"
+            :title="'中文标题'"
+            :edit-render="{ name: 'input', props: {} }"
+          />
+          <vxe-table-column
+            min-width="150"
+            field="DISPLAY_FORMAT"
+            :title="'显示格式'"
+            :edit-render="{ name: 'input', props: {} }"
+          />
+          <vxe-table-column
+            min-width="150"
+            field="DISPLAY_WIDTH"
+            :title="'显示宽度'"
+            :edit-render="{ name: 'input', props: {} }"
+          />
+          <vxe-table-column
+            min-width="150"
+            field="IS_DISPLAY"
+            :title="'是否显示'"
+          >
+            <template v-slot="{ row }">
+              <el-switch
+                v-model="row.IS_DISPLAY"
+                :active-text="$t('publics.btn.yes')"
+                :inactive-text="$t('publics.btn.no')"
+                active-color="#13ce66"
+                inactive-color="#cccccc"
+                active-value="Y"
+                inactive-value="N"
+              />
+            </template>
+          </vxe-table-column>
+          <vxe-table-column
+            :title="$t('as_cfe.tb_og')"
+            min-width="150"
+            align="center"
+            fixed="right"
+          >
+            <template v-slot="{ row }">
+              <el-button type="danger" @click="removeGenerateTable(row)">{{
+                $t("as_cfe.tb_rm")
+              }}</el-button>
+            </template>
+          </vxe-table-column>
+        </vxe-table>
+        <!-- 第三步 -->
+        <vxe-table
+          v-show="activeIndex === 3"
+          ref="conditionTable"
+          border
+          resizable
+          height="350px"
+          size="medium"
+          align="center"
+          highlight-current-row
+          highlight-hover-row
+          show-overflow
+          auto-resize
+          keep-source
+          stripe
+          :loading="loading3"
+          :data="conditionMainTable"
+          :mouse-config="{ selected: true }"
+          :edit-config="{ trigger: 'click', mode: 'row', showStatus: true }"
+          :radio-config="{ labelField: 'name', trigger: 'row' }"
+          :checkbox-config="{ checkField: 'checked', trigger: 'row' }"
+        >
+          <vxe-table-column
+            sortable
+            width="80"
+            field="ORD_IDX"
+            :title="'序号'"
+            :edit-render="{ name: 'input', props: {} }"
+          />
+          <vxe-table-column
+            min-width="150"
+            field="PARAM_NAME"
+            :title="'字段(参数名)'"
+            :edit-render="{ name: 'input', props: {} }"
+          />
+          <vxe-table-column
+            min-width="150"
+            field="PARAM_CAPTION"
+            :title="'参数标题'"
+            :edit-render="{ name: 'input', props: {} }"
+          />
+          <vxe-table-column
+            min-width="150"
+            field="PARAM_VALUE"
+            :title="'默认值'"
+            :edit-render="{ name: 'input', props: {} }"
+          />
+          <vxe-table-column
+            min-width="150"
+            field="ACTION_TYPE"
+            :title="'操作类型'"
+            :edit-render="{ autofocus: '.custom-input', type: 'visible' }"
+          >
+            <template v-slot:edit="{ row }">
+              <el-select
+                v-model="row.ACTION_TYPE"
+                style="width: 100%"
+                placeholder=" "
+              >
+                <el-option
+                  v-for="(item, index) in typeList"
+                  :key="index"
+                  :label="item.label"
+                  :value="item.value"
+                >
+                </el-option>
+              </el-select>
+            </template>
+          </vxe-table-column>
+          <vxe-table-column
+            min-width="150"
+            field="DATA_TYPE"
+            :title="'参数类型'"
+            :edit-render="{ autofocus: '.custom-input', type: 'visible' }"
+          >
+            <template v-slot:edit="{ row }">
+              <el-select
+                v-model="row.DATA_TYPE"
+                style="width: 100%"
+                placeholder=" "
+              >
+                <el-option
+                  v-for="(item, index) in parameterList"
+                  :key="index"
+                  :label="item.label"
+                  :value="item.value"
+                />
+              </el-select>
+            </template>
+          </vxe-table-column>
+          <vxe-table-column
+            min-width="150"
+            field="IS_DEFAULT"
+            :title="'是否默认条件'"
+          >
+            <template v-slot="{ row }">
+              <el-switch
+                v-model="row.IS_DEFAULT"
+                :active-text="$t('publics.btn.yes')"
+                :inactive-text="$t('publics.btn.no')"
+                active-color="#13ce66"
+                inactive-color="#cccccc"
+                active-value="Y"
+                inactive-value="N"
+              />
+            </template>
+          </vxe-table-column>
+          <vxe-table-column
+            min-width="150"
+            field="IS_PAGING"
+            :title="'下拉框是否分页'"
+          >
+            <template v-slot="{ row }">
+              <el-switch
+                v-model="row.IS_PAGING"
+                :active-text="$t('publics.btn.yes')"
+                :inactive-text="$t('publics.btn.no')"
+                active-color="#13ce66"
+                inactive-color="#cccccc"
+                active-value="Y"
+                inactive-value="N"
+              />
+            </template>
+          </vxe-table-column>
+          <vxe-table-column
+            min-width="150"
+            field="REMARK"
+            :title="'描述'"
+            :edit-render="{ name: 'input', props: {} }"
+          />
+          <vxe-table-column
+            style="visibility:hidden"
+            min-width="10"
+            field="REFERENCE_SQL"
+            :title="''"
+            :edit-render="{ name: 'input', props: {} }"
+          />
+          <vxe-table-column
+            :title="$t('as_cfe.tb_og')"
+            min-width="210"
+            align="center"
+            fixed="right"
+          >
+            <template v-slot="{ row,$rowIndex }">
+              <el-button type="primary" @click="Associated_SQL(row,$rowIndex)"
+                >相关联SQL语句</el-button
+              >
+              <el-button type="danger" @click="removeConditionTable(row)">{{
+                $t("as_cfe.tb_rm")
+              }}</el-button>
+            </template>
+          </vxe-table-column>
+        </vxe-table>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false">{{
+          $t("ssc_rd.cancel")
+        }}</el-button>
+        <el-button type="primary" @click="submitModifyForm">{{
+          $t("ssc_rd.sure")
+        }}</el-button>
+      </span>
+    </el-dialog>
+    <!-- 编辑 -->
+    <el-dialog
+      v-dialogDrag
+      :title="$t('sql._7')"
+      :visible.sync="dialogFormVisible"
+      width="60%"
+      :close-on-click-modal="false"
+    >
+      <span>{{ $t("IE._2") }}</span>
+      <el-input
+        type="textarea"
+        v-model="SQL_Content"
+        :placeholder="$t('IE._3')"
+        :rows="10"
+      />
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="cancel('form')">{{ $t("se.cancel") }}</el-button>
+        <el-button type="primary" @click="submit_but()">{{
+          $t("se.confirm")
+        }}</el-button>
+      </div>
+    </el-dialog>
+  </d2-container>
+</template>
+
+<script>
+import dayjs from 'dayjs'
+import pagination from '@/views/mixin/page'
+import customContainerHeader from '@/components/custom-container-header'
+import {
+  Index,
+  LoadData,
+  LoadDtlData,
+  GetParams,
+  GetParamsForQuery,
+  GetIntiTableColumnList,
+  GetSqlColumnList,
+  SaveData,
+  DeleteOneById
+} from '@/api/ReportMst'
+import { mapGetters } from 'vuex'
+export default {
+  name: 'ReportMst',
+  computed: {
+    ...mapGetters(['userinfo'])
+  },
+  data () {
+    return {
+      dialogFormVisible: false,
+      SqlData: '',
+      formData: {
+        Page: 1,
+        Limit: 15
+      },
+      loading: false,
+      loading2: false,
+      loading3: false,
+      mainTable: [],
+      dialogVisible: false,
+      dialogText: '',
+      validRules: {
+        ACTION_NAME: [{ required: true, message: '请输入报表名称' }],
+        SQL: [{ required: true, message: '请输入sql语句配置' }],
+        COLUMN_CONFIG: [{ required: true, message: '请输入字段配置' }],
+        TOOLBAR_CONFIG: [{ required: true, message: '请输入工具栏配置' }]
+      },
+      activeIndex: 1,
+      generateMainTable: [],
+      conditionMainTable: [],
+      typeList: [
+        { value: 1, label: '等于(=)' },
+        { value: 2, label: '大于(>)' },
+        { value: 3, label: '大于等于(>=)' },
+        { value: 4, label: '小于(<)' },
+        { value: 5, label: '小于等于(<=)' },
+        { value: 6, label: '模糊搜索(like)' }
+      ],
+      parameterList: [
+        { value: 1, label: '文本框' },
+        { value: 2, label: '下拉选择框' },
+        { value: 3, label: '数字' },
+        { value: 4, label: '日期' }
+      ],
+      modifyForm: {
+        Mst_id: 0,
+        MstItem: {
+          ID: 0,
+          SQL: '',
+          CREATE_DATE: '',
+          EDIT_DATE: '',
+          REPORT_NAME: '',
+          REMARK: '',
+          ENABLED: '',
+          CREATOR: '',
+          SQL_CNT: ''
+        },
+        DtlItem: {
+          InsertRecords: [],
+          UpdateRecords: [],
+          RemoveRecords: []
+        },
+        ParamItem: {
+          InsertRecords: [],
+          UpdateRecords: [],
+          RemoveRecords: []
+        }
+      },
+      isNewDtlItem: false,
+      isNewParamItem: false,
+      currentIndex: -1,
+      SQL_Content: ''
+    }
+  },
+  methods: {
+    async getLoadData () {
+      this.loading = true
+      const res = await LoadData(this.formData)
+      if (res.Result) {
+        this.mainTable = res.Result
+        this.totalPage = res.TotalCount
+      }
+      console.log(this.mainTable, '获取表格')
+      this.loading = false
+    },
+    // 搜索
+    searchClick () {
+      this.formData.Page = 1
+      this.getLoadData()
+    },
+    // 新增
+    insertEvent (row) {
+      this.isNewParamItem = true
+      this.dialogVisible = true
+      this.activeIndex = 1
+      this.modifyForm = {
+        Mst_id: 0,
+        MstItem: {
+          ID: 0,
+          SQL: '',
+          CREATE_DATE: dayjs().format('YYYY-MM-DD'),
+          EDIT_DATE: '',
+          REPORT_NAME: '',
+          REMARK: '',
+          ENABLED: '',
+          CREATOR: this.userinfo.USER_NAME,
+          SQL_CNT: ''
+        },
+        DtlItem: {
+          InsertRecords: [],
+          UpdateRecords: [],
+          RemoveRecords: []
+        },
+        ParamItem: {
+          InsertRecords: [],
+          UpdateRecords: [],
+          RemoveRecords: []
+        }
+      }
+      this.dialogText = this.$t('publics.btn.add')
+      this.generateMainTable = []
+      this.conditionMainTable = []
+    },
+    nextClick () {
+      if (this.activeIndex >= 3) {
+        this.$message.error('已经是最后一步')
+      } else {
+        this.activeIndex++
+      }
+    },
+    lastClick () {
+      if (this.activeIndex === 1) {
+        this.$message.error('已经是第一步')
+      } else {
+        this.activeIndex--
+      }
+    },
+    // 生成字段
+    async GenerateField () {
+      if (
+        !this.modifyForm.MstItem.SQL ||
+        this.modifyForm.MstItem.SQL.length === 0
+      ) {
+        return this.$message.error('请先输入sql语句')
+      }
+      // console.log('this.modifyForm.MstItem', this.modifyForm.MstItem)
+      this.loading2 = true
+      const res = await GetSqlColumnList({
+        sql: this.modifyForm.MstItem.SQL,
+        table_name: this.modifyForm.MstItem.table_name
+      })
+      this.loading2 = false
+      this.isNewDtlItem = true
+      this.generateMainTable = res.Result || []
+      this.generateMainTable
+        .this.generateMainTable = res.Result || []
+      this.$refs.generateTable.sort('ORD_IDX', 'asc')
+      console.log('步骤2表格：', this.generateMainTable)
+    },
+    // 获取标题
+    async getTitle () {
+      if (!this.modifyForm.MstItem.table_name) {
+        return this.$message.error('请输入主表名称')
+      }
+      const res = await GetIntiTableColumnList({
+        table_name: this.modifyForm.MstItem.table_name
+      })
+      let data = res.Result || []
+      console.log('获取标题:', data)
+      let dataArr = []
+      let dataArr2 = []
+      data.map(item => {
+        dataArr.push(item.COLUMN_NAME)
+      })
+      this.generateMainTable.map(item => {
+        dataArr2.push(dataArr.indexOf(item.COLUMN_NAME))
+      })
+      console.log('dataArr2:', dataArr2)
+      dataArr2.map(item => {
+        if (item !== -1) {
+          this.generateMainTable[item].COLUMN_CAPTION = data[item].COLUMN_CAPTION
+        }
+      })
+      console.log('步骤2表格:', this.generateMainTable)
+    },
+    addClick (row) {
+      const record = {
+        ID: 0,
+        PARAM_NAME: '',
+        DATA_TYPE: null,
+        PARAM_VALUE: '',
+        REMARK: '',
+        MST_ID: 0,
+        ACTION_TYPE: null,
+        REFERENCE_SQL: '',
+        ORD_IDX: this.$refs.conditionTable.getTableData().tableData.length + 1,
+        IS_DEFAULT: ''
+      }
+      this.$refs.conditionTable.insertAt(record, row).then(({ row }) => {
+        this.$refs.conditionTable.setActiveRow(row)
+      })
+    },
+    // 提交
+    submitModifyForm () {
+      var that = this
+      var postdata = this.$refs.generateTable.getRecordset()
+      var postdata2 = this.$refs.conditionTable.getRecordset()
+      console.log('postdata:', postdata)
+      if (this.isNewDtlItem) {
+        if (postdata.updateRecords.length > 0) {
+          this.modifyForm.DtlItem.InsertRecords = postdata.updateRecords
+        } else {
+          this.modifyForm.DtlItem.InsertRecords = postdata.insertRecords
+        }
+      } else {
+        this.modifyForm.DtlItem.InsertRecords = postdata.insertRecords
+        this.modifyForm.DtlItem.UpdateRecords = postdata.updateRecords
+        this.modifyForm.DtlItem.RemoveRecords = postdata.removeRecords
+        this.modifyForm.ParamItem.InsertRecords = postdata2.insertRecords
+        this.modifyForm.ParamItem.UpdateRecords = postdata2.updateRecords
+        this.modifyForm.ParamItem.RemoveRecords = postdata2.removeRecords
+      }
+
+      SaveData(this.modifyForm).then((res) => {
+        if (res.Result) {
+          that.getLoadData()
+          that.clearAll()
+          that.$notify({
+            title: that.$t('crss._20'),
+            message: that.$t('crss._21'),
+            type: 'success',
+            duration: 2000
+          })
+        }
+        that.dialogVisible = false
+      })
+    },
+    editRow (row) {
+      // console.log('编辑：', row)
+      this.modifyForm = {
+        Mst_id: row.ID,
+        MstItem: row,
+        DtlItem: {
+          InsertRecords: [],
+          UpdateRecords: [],
+          RemoveRecords: []
+        },
+        ParamItem: {
+          InsertRecords: [],
+          UpdateRecords: [],
+          RemoveRecords: []
+        }
+      }
+      this.isNewParamItem = false
+      this.activeIndex = 1
+      this.dialogText = this.$t('publics.btn.edit')
+      this.getLoadDtlData(row.ID)
+      this.getParamsForQuery(row.ID)
+      this.dialogVisible = true
+    },
+    // 查步骤2
+    async getLoadDtlData (e) {
+      this.loading2 = true
+      const res = await LoadDtlData({ mst_id: e })
+      this.loading2 = false
+      this.generateMainTable = res.Result || []
+      this.$refs.generateTable.sort('ORD_IDX', 'asc')
+      console.log('步骤2表格：', this.generateMainTable)
+    },
+    // 查步骤3
+    async getParamsForQuery (e) {
+      this.loading3 = true
+      const res = await GetParamsForQuery({ id: e })
+      this.loading3 = false
+      this.conditionMainTable = res.Result || []
+    },
+    removeClick (row) {
+      this.$confirm(
+        this.$t('publics.tips.makeSureDelete'),
+        this.$t('MesTongsApply._91'),
+        {
+          confirmButtonText: this.$t('MesTongsApply._92'),
+          cancelButtonText: this.$t('MesTongsApply._93'),
+          type: 'warning'
+        }
+      ).then(async () => {
+        const res = await DeleteOneById({ ID: row.ID })
+        if (res.Result) {
+          this.$message({
+            type: 'success',
+            message: this.$t('MesTongsApply._94')
+          })
+          this.getLoadData()
+        }
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: this.$t('MesTongsApply._95')
+        })
+      })
+    },
+    removeGenerateTable (row) {
+      this.$refs.generateTable.remove(row)
+      var num = 1
+      this.$refs.generateTable.getTableData().tableData.map((item) => {
+        item.ORD_IDX = num
+        num++
+      })
+    },
+    Associated_SQL (row, index) {
+      this.currentIndex = index
+      if (this.conditionMainTable[index].REFERENCE_SQL !== null) {
+        this.SQL_Content = this.conditionMainTable[this.currentIndex].REFERENCE_SQL
+      }
+      this.dialogFormVisible = true
+    },
+    cancel () {
+      this.dialogFormVisible = false
+    },
+    submit_but () {
+      this.conditionMainTable[this.currentIndex].REFERENCE_SQL = this.SQL_Content
+      this.dialogFormVisible = false
+    },
+    removeConditionTable (row) {
+      this.$refs.conditionTable.remove(row)
+      var num = 1
+      this.$refs.conditionTable.getTableData().tableData.map((item) => {
+        item.ORD_IDX = num
+        num++
+      })
+    },
+    clearAll () {
+      this.currentIndex = -1
+      this.isNewDtlItem = false
+      this.isNewParamItem = false
+      this.generateMainTable = []
+      this.conditionMainTable = []
+      this.modifyForm = {
+        Mst_id: 0,
+        MstItem: {
+          ID: 0,
+          SQL: '',
+          CREATE_DATE: '',
+          EDIT_DATE: '',
+          REPORT_NAME: '',
+          REMARK: '',
+          ENABLED: '',
+          CREATOR: '',
+          SQL_CNT: ''
+        },
+        DtlItem: {
+          InsertRecords: [],
+          UpdateRecords: [],
+          RemoveRecords: []
+        },
+        ParamItem: {
+          InsertRecords: [],
+          UpdateRecords: [],
+          RemoveRecords: []
+        }
+      }
+    }
+  },
+  components: {
+    customContainerHeader
+  },
+  mixins: [pagination],
+  created () {
+    this.getLoadData()
+  }
+}
+</script>
+
+<style lang="scss" scoped>
+</style>
+
+<style>
+.x-xdia .el-dialog {
+  margin-top: 5vh !important;
+}
+</style>

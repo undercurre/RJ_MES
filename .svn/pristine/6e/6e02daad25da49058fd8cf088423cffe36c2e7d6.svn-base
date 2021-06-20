@@ -1,0 +1,383 @@
+<template>
+  <d2-container>
+    <template slot="header">
+      <custom-container-header :importBtnName = "modulesName + 'Import'"
+                               :exportBtnName = "modulesName + 'Export'"
+                               :exportTplName = "modulesName + 'ExportTPL'"
+                               export-mehods-name="exportData"
+      >
+        <!--报表中心按钮-->
+        <el-select placeholder="请选择报表" v-model="modulesName" style="width: 200px;" size="small">
+          <el-option v-for="item in modulesList"
+                     :key="item.id"
+                     :label="item.label"
+                     :value="item.name">
+          </el-option>
+        </el-select>
+        <!--    普通输入框    -->
+        <el-input v-for="item in headerConfig.inputList" :key="item.MST_ID" :placeholder="'请输入'+item.TITLE" v-model="form[item.PARAM_NAME]" style="width: 150px; margin-right: 10px" size="small"></el-input>
+        <!--   普通下拉框     -->
+        <el-select v-for="item in headerConfig.selectList" :key="item.MST_ID" :placeholder="'请选择'+item.TITLE" v-model="form[item.PARAM_NAME]" style="width: 150px; margin-right: 10px" size="small">
+          <el-option v-for="option in item.REFERENCE_List"
+                     :key="option.CODE"
+                     :label="option.NAME"
+                     :value="option.CODE">
+          </el-option>
+        </el-select>
+        <!--    分页下拉框    -->
+        <PSelect v-for="item in headerConfig.PSelectList"
+                 :key="item.MST_ID"
+                 :bind-data="form[item.PARAM_NAME]"
+                 :placeholder-str="item.TITLE"
+                 :p-a-r-a-m_-n-a-m-e="item.PARAM_NAME"
+                 @getData="setPSelectData"
+                 style="width: 150px; margin-right: 10px"
+        ></PSelect>
+        <!--    搜索按钮    -->
+        <el-button
+          type="primary"
+          icon="el-icon-search"
+          @click.prevent="searchClick"
+        >{{ $t("plbd.hd_sf") }}</el-button
+        >
+        <!--    新增按钮    -->
+        <el-button
+          type="success"
+          @click="insertEvent(null)"
+          icon="el-icon-plus"
+        >{{ $t("plbd.add") }}</el-button
+        >
+        <!--    高级筛选按钮    -->
+        <el-button type="primary" icon="el-icon-finished" @click="sort_drawer = true" size="small">高级筛选</el-button>
+      </custom-container-header>
+    </template>
+    <div class="table">
+      <vxe-table
+        border
+        resizable
+        show-overflow
+        align="center"
+        :data="tableData"
+        :edit-config="{trigger: 'dblclick', mode: 'cell'}">
+        <vxe-table-column type="seq" width="60"></vxe-table-column>
+        <vxe-table-column :field="item.PARAM_NAME" width="150" :title="item.TITLE" :edit-render="{}" v-for="item in allConfig" :key="item.MST_ID">
+          <template #default = "{ row }">
+            <span v-if="item.DATA_TYPE !== 2">{{ row[item.PARAM_NAME] }}</span>
+            <span v-if="item.DATA_TYPE === 2">{{ item.REFERENCE_List.filter(fil => fil.CODE === row[item.PARAM_NAME])[0].NAME }}</span>
+          </template>
+          <template #edit = "{ row }">
+            <vxe-input type="text" v-model="row[item.PARAM_NAME]" v-if="item.DATA_TYPE === 1"></vxe-input>
+            <vxe-select v-model="row[item.PARAM_NAME]" v-if="item.DATA_TYPE === 2">
+              <vxe-option v-for="option in item.REFERENCE_List"
+                         :key="option.CODE"
+                         :label="option.NAME"
+                         :value="option.CODE">
+              </vxe-option>
+            </vxe-select>
+            <PSelect
+                     :bind-data="row[item.PARAM_NAME]"
+                     :placeholder-str="item.TITLE"
+                     :p-a-r-a-m_-n-a-m-e="item.PARAM_NAME"
+                     @getData="setPSelectData"
+                     style="width: 150px; margin-right: 10px"
+                     v-if="item.DATA_TYPE === 3"
+            ></PSelect>
+          </template>
+        </vxe-table-column>
+        <vxe-table-column field="ENABLED" fixed="right" width="200" :title="$t('se_cc.operate')">
+          <template slot-scope="scope">
+            <el-button
+              v-if="$btnList.indexOf('SfcsEquipContentConfedit') !== -1"
+              type="primary"
+              size="small"
+              @click="edit_btn(scope.row)"
+            >{{$t('se_cc.edit')}}</el-button>
+            <el-button
+              v-if="$btnList.indexOf('SfcsEquipContentConfdelete') !== -1"
+              type="danger"
+              size="small"
+              @click="remove_btn(scope.row)"
+            >{{$t('se_cc.delete')}}</el-button>
+          </template>
+        </vxe-table-column>
+      </vxe-table>
+    </div>
+    <template slot="footer">
+      <el-pagination
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+        :current-page="listQuery.currentPage"
+        :page-sizes="[15, 20, 30, 40]"
+        :page-size="listQuery.limit"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="total">
+      </el-pagination>
+    </template>
+    <el-drawer title="高级筛选"
+               :visible.sync="sort_drawer"
+               direction="rtl"
+               :before-close="sort_handleClose"
+               size="60%">
+      <el-card class="box-card"
+               style="margin: 0 10px">
+        <div slot="header"
+             class="clearfix">
+          <span>范围筛选</span>
+          <el-button style="float: right; padding: 3px 0"
+                     type="text">
+          重置</el-button>
+          <el-button style="float: right; padding: 3px 0; margin-right: 20px"
+                     type="text"
+                     @click="searchClick">确认</el-button>
+        </div>
+        <div>
+          <el-form :model="form" ref="ruleForm" label-width="80px" class="demo-ruleForm">
+            <el-col :span="12" :key="item.MST_ID" v-for="item in allConfig">
+              <el-form-item :label="item.TITLE">
+                <el-input v-if="item.DATA_TYPE === 1" :placeholder="'请输入'+item.TITLE" v-model="form[item.PARAM_NAME]" size="small"></el-input>
+                <el-select v-if="item.DATA_TYPE === 2" :placeholder="'请选择'+item.TITLE" v-model="form[item.PARAM_NAME]" size="small">
+                  <el-option v-for="option in item.REFERENCE_List"
+                             :key="option.CODE"
+                             :label="option.NAME"
+                             :value="option.CODE">
+                  </el-option>
+                </el-select>
+                <PSelect v-if="item.DATA_TYPE === 3"
+                         :bind-data="form[item.PARAM_NAME]"
+                         :placeholder-str="item.TITLE"
+                         :p-a-r-a-m_-n-a-m-e="item.PARAM_NAME"
+                         @getData="setPSelectData"
+                ></PSelect>
+              </el-form-item>
+            </el-col>
+          </el-form>
+        </div>
+      </el-card>
+    </el-drawer>
+  </d2-container>
+</template>
+
+<script>
+import PSelect from '@/components/PSelect'
+import CustomContainerHeader from '@/components/custom-container-header'
+import request from '@/plugin/axios'
+import { Index } from '@/api/CustomReport/index'
+
+export default {
+  name: 'CustomReport',
+  data () {
+    return {
+      // 当前报表模块名称,用于构建头部功能栏的功能按键
+      modulesName: '',
+      // 报表中心按钮
+      modulesList: [],
+      // 搜索表单
+      form: {},
+      // 新增表单
+      edit: {},
+      // 报表配置数据
+      data: [],
+      // 顶部功能栏
+      // 普通输入框
+      headerConfig: {
+        inputList: [],
+        // 日期输入框
+        dateList: [],
+        // 普通下拉框
+        selectList: [],
+        // 分页下拉框
+        PSelectList: []
+      },
+      // 高级筛选渲染配置
+      allConfig: [],
+      // 列表数据
+      tableData: [],
+      // 分页
+      total: 400,
+      listQuery: {
+        currentPage: 1,
+        limit: 15
+      },
+      // 高级筛选开关
+      sort_drawer: false
+    }
+  },
+  methods: {
+    async getModulesList () {
+      // const res = await Index()
+      // this.modulesList = res.Result.data
+      this.modulesList = [
+        {
+          id: 1,
+          label: '测试1',
+          name: 'test1'
+        }, {
+          id: 2,
+          label: '测试2',
+          name: 'test2'
+        }, {
+          id: 3,
+          label: '测试3',
+          name: 'test3'
+        }]
+      this.modulesName = this.modulesList[0].name
+    },
+    async edit_btn (row) {
+      Object.keys(row).forEach(item => {
+        this.form[item] = row[item]
+      })
+      const res = await request.post(this.data.updateData, this.form)
+      this.tableData = res.Result.data
+    },
+    async remove_btn (row) {
+      const res = await request.post(this.data.updateData, row.id)
+      this.tableData = res.Result.data
+    },
+    async searchClick () {
+      // const res = await request.post(this.data.selectData, this.listQuery)
+      // this.tableData = res.Result.data
+      // this.total = res.Result.totalcount
+      // this.listQuery.currentPage = res.Result.currentPage
+      // this.listQuery.limit = res.Result.limit
+      this.tableData = [
+        { id: 1, PNO: '00001', REPAIR_TYPE: 4, PN: '201123203' },
+        { id: 2, PNO: '00002', REPAIR_TYPE: 19, PN: '201123203' },
+        { id: 3, PNO: '00003', REPAIR_TYPE: 20, PN: '201123203' }
+      ]
+      this.total = 200
+      this.listQuery.currentPage = 1
+      this.listQuery.limit = 30
+    },
+    async insertEvent () {
+      const res = await request.post(this.data.saveData, this.form)
+      this.tableData = res.Result.data
+    },
+    async changeSwitch (row) {
+      await this.edit_btn(row)
+    },
+    sort_handleClose () {
+      this.sort_drawer = false
+    },
+    handleSizeChange (val) {
+      this.listQuery.limit = val
+      this.searchClick()
+    },
+    handleCurrentChange (val) {
+      this.listQuery.currentPage = val
+      this.searchClick()
+    },
+    updateView () {
+      this.$forceUpdate()
+    },
+    setPSelectData (val) {
+      this.form[val.name] = val.val
+    },
+    async getParamsForQuery (moduleName) {
+      // const res = await GetParamsForQuery(this.modulesName)
+      // this.data = res.Result.data
+      // 伪数据 1为普通输入框 2为普通下拉框 3为分页下拉框
+      this.data = {
+        headerConfig: [
+          {
+            PARAM_NAME: 'PNO',
+            DATA_TYPE: 1,
+            TITLE: '项目号',
+            MST_ID: 4
+          },
+          {
+            PARAM_NAME: 'REPAIR_TYPE',
+            DATA_TYPE: 2,
+            TITLE: '维修类型',
+            REFERENCE_List: [{
+              CODE: 4,
+              NAME: '测试'
+            }, {
+              CODE: 19,
+              NAME: 'BFT维修'
+            }, {
+              CODE: 20,
+              NAME: 'RMA维修'
+            }],
+            MST_ID: 1
+          },
+          {
+            PARAM_NAME: 'PN',
+            DATA_TYPE: 3,
+            TITLE: '料号',
+            MST_ID: 9
+          }],
+        allConfig: [
+          {
+            PARAM_NAME: 'PNO',
+            DATA_TYPE: 1,
+            TITLE: '项目号',
+            MST_ID: 4
+          },
+          {
+            PARAM_NAME: 'REPAIR_TYPE',
+            DATA_TYPE: 2,
+            TITLE: '维修类型',
+            REFERENCE_List: [{
+              CODE: 4,
+              NAME: '测试'
+            }, {
+              CODE: 19,
+              NAME: 'BFT维修'
+            }, {
+              CODE: 20,
+              NAME: 'RMA维修'
+            }],
+            MST_ID: 1
+          },
+          {
+            PARAM_NAME: 'PN',
+            DATA_TYPE: 3,
+            TITLE: '料号',
+            MST_ID: 9
+          }],
+        selectData: '',
+        updateData: '',
+        saveData: '',
+        deleteData: ''
+      }
+      this.data.allConfig.forEach(item => {
+        if (item.PARAM_NAME) {
+          this.$set(this.form, item.PARAM_NAME.toString(), '')
+        }
+      })
+      this.$forceUpdate()
+      this.headerConfig.inputList = this.data.headerConfig.filter(item => item.DATA_TYPE === 1)
+      this.headerConfig.selectList = this.data.headerConfig.filter(item => item.DATA_TYPE === 2)
+      this.headerConfig.PSelectList = this.data.headerConfig.filter(item => item.DATA_TYPE === 3)
+      this.allConfig = this.data.allConfig
+    }
+  },
+  created () {
+    this.getModulesList()
+  },
+  watch: {
+    modulesName (val) {
+      this.getParamsForQuery(val)
+    },
+    data (val) {
+      this.searchClick()
+    }
+  },
+  components: {
+    CustomContainerHeader,
+    PSelect
+  }
+}
+</script>
+
+<style scoped lang="scss">
+  .d2-container-full__header {
+    padding: 10px 20px;
+  }
+ ::v-deep .el-drawer__body{
+   padding: 20px;
+   display: flex;
+   justify-content: space-between;
+   flex-direction: column;
+ }
+</style>

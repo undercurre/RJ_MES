@@ -1,0 +1,486 @@
+<template>
+  <d2-container class="SmtLineSubstitute">
+    <template slot="header">
+      <custom-container-header
+                               tableName="SFCS_DISABLE_COMPONENTS"
+                               importBtnName="SmtLineSubstituteImport"
+                               exportBtnName="SmtLineSubstituteExport"
+                               exportTplName="SmtLineSubstituteExportTPL">
+        <el-input v-model="formData.WO_NO"
+                  placeholder="请输入工单号"
+                  clearable
+                  style="width: 180px"
+                  @keyup.enter.native="searchClick" />&nbsp;
+        <el-input v-model="formData.CUSTOMER_COMPONENT_PN"
+                  placeholder="请输入产品料号"
+                  clearable
+                  style="width: 180px"
+                  @keyup.enter.native="searchClick" />&nbsp;
+        <el-input v-model="formData.DISABLE_COMPONENT_PN"
+                  placeholder="请输入禁用料号"
+                  clearable
+                  style="width: 180px"
+                  @keyup.enter.native="searchClick" />&nbsp;
+        <el-button type="primary"
+                   icon="el-icon-search"
+                   @click.prevent="searchClick">{{ $t("sls.hd_sf") }}</el-button>
+        <el-button type="success"
+                   @click="insertEvent(-1)"
+                   icon="el-icon-plus"
+                   v-if="$btnList.indexOf('SmtReplacePnAdd') !== -1">{{ $t("sls.add") }}</el-button>
+      </custom-container-header>
+    </template>
+    <div class="table-container">
+      <vxe-table ref="xTable"
+                 border
+                 resizable
+                 height="100%"
+                 size="medium"
+                 align="center"
+                 highlight-hover-row
+                 highlight-current-row
+                 show-overflow
+                 auto-resize
+                 keep-source
+                 stripe
+                 :loading="loading"
+                 :data="mainTable"
+                 :edit-rules="validRules"
+                 :mouse-config="{ selected: true }"
+                 :edit-config="{ trigger: 'click', mode: 'row', showStatus: true }"
+                 :radio-config="{ labelField: 'name', trigger: 'row' }"
+                 :checkbox-config="{ checkField: 'checked', trigger: 'row' }">
+        <vxe-table-column min-width="210"
+                          field="WO_NO"
+                          :title="$t('slw.t_1')"
+                          :edit-render="{ name: '$input', props: { readonly: true } }" />
+        <vxe-table-column min-width="230"
+                          field="CUSTOMER_COMPONENT_PN"
+                          :title="$t('StopLineControl._22')"
+                          :edit-render="{ name: '$input', props: { readonly: true } }" />
+        <vxe-table-column min-width="220"
+                          field="DISABLE_COMPONENT_PN"
+                          title="禁用料号"
+                          :edit-render="{ name: '$input', props: { readonly: true } }" />
+        <vxe-table-column min-width="180"
+                          field="BEGIN_DATE"
+                          title="有效起始日期"
+                          :edit-render="{ name: '$input', props: { readonly: true } }"></vxe-table-column>
+        <vxe-table-column min-width="230"
+                          field="END_DATE"
+                          title="有效结束日期"
+                          :edit-render="{ name: '$input', props: { readonly: true } }" />
+        <vxe-table-column min-width="160"
+                          field="ENABLED"
+                          title="是否可用"
+                          :edit-render="{ autofocus: '.custom-input', type: 'visible' }">
+          <template v-slot:edit="{ row }">
+            <div class="rddselect">
+              <el-switch disabled
+                         v-model="row.ENABLED"
+                         :active-text="$t('sls.yes')"
+                         :inactive-text="$t('sls.no')"
+                         active-color="#13ce66"
+                         inactive-color="#cccccc"
+                         active-value="Y"
+                         inactive-value="N" />
+            </div>
+          </template>
+        </vxe-table-column>
+        <vxe-table-column min-width="150"
+                          field="CREATEUSER"
+                          title="创建人"
+                          :edit-render="{ name: '$input', props: { readonly: true } }" />
+        <vxe-table-column min-width="150"
+                          field="CREATEDATE"
+                          title="创建时间"
+                          :edit-render="{ name: '$input', props: { readonly: true } }" />
+        <vxe-table-column min-width="150"
+                          field="UPDATEUSER"
+                          title="修改人"
+                          :edit-render="{ name: '$input', props: { readonly: true } }" />
+        <vxe-table-column min-width="150"
+                          field="UPDATEDATE"
+                          title="修改时间"
+                          :edit-render="{ name: '$input', props: { readonly: true } }" />
+        <vxe-table-column :title="$t('sls.tb_og')"
+                          width="180"
+                          align="center"
+                          fixed="right">
+          <template v-slot="{ row }">
+            <el-button type="primary"
+                       @click="editBut(row, row.$index)"
+                       v-if="$btnList.indexOf('SmtReplacePnEdit') !== -1">{{ $t("sls._2") }}</el-button>
+            <el-button type="danger"
+                       @click="removeClick(row, row.$index)"
+                       v-if="$btnList.indexOf('SmtReplacePnRemove') !== -1">
+              {{ $t("sls.tb_rm") }}
+            </el-button>
+          </template>
+        </vxe-table-column>
+      </vxe-table>
+    </div>
+    <template slot="footer">
+      <el-pagination :current-page="formData.Page"
+                     :page-size="formData.Limit"
+                     :page-sizes="[15, 25, 35, 45]"
+                     layout="total, sizes, prev, pager, next, jumper"
+                     :total="totalPage"
+                     @size-change="handleSizeChange"
+                     @current-change="handleCurrentChange" />
+    </template>
+    <!-- 编辑页面 -->
+    <el-dialog v-dialogDrag
+               :title="textMap[dialogStatus]"
+               :visible.sync="dialogFormVisible"
+               width="70%"
+               class="Dialog"
+               :close-on-click-modal="false">
+      <el-form label-position="top"
+               ref="TableData"
+               :show-message="false"
+               :model="TableData"
+               :rules="rules"
+               label-width="85px"
+               class="Dialogform">
+        <el-row :gutter="24">
+          <el-col :span="12">
+            <el-form-item prop="WO_NO">
+              <span>{{ $t("slw.t_1") }}</span>
+              <el-input v-model="TableData.WO_NO"
+                        placeholder="请输入工单号" />
+            </el-form-item>
+            <el-form-item prop="CUSTOMER_COMPONENT_PN">
+              <span>{{ $t("StopLineControl._22") }}</span>
+              <el-input v-model="TableData.CUSTOMER_COMPONENT_PN"
+                        placeholder="请输入产品料号" />
+            </el-form-item>
+            <el-form-item prop="DISABLE_COMPONENT_PN">
+              <span>禁用料号</span>
+              <el-input v-model="TableData.DISABLE_COMPONENT_PN"
+                        placeholder="请输入禁用料号" />
+            </el-form-item>
+            <el-form-item prop="CREATEUSER">
+              <span>创建人</span>
+              <el-input v-model="TableData.CREATEUSER"
+                        placeholder="请输入创建人" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item prop="UPDATEUSER">
+              <span>修改人</span>
+              <el-input v-model="TableData.UPDATEUSER"
+                        placeholder="请输入修改人" />
+            </el-form-item>
+            <el-form-item prop="BEGIN_DATE">
+              <span>有效起始日期</span>
+              <el-date-picker value-format="yyyy-MM-dd HH:mm:ss"
+                              style="width: 100%"
+                              v-model="TableData.BEGIN_DATE"
+                              type="datetime"
+                              placeholder="请选择有效起始日期"></el-date-picker>
+            </el-form-item>
+            <el-form-item prop="END_DATE">
+              <span>有效结束日期</span>
+              <el-date-picker value-format="yyyy-MM-dd HH:mm:ss"
+                              style="width: 100%"
+                              v-model="TableData.END_DATE"
+                              type="datetime"
+                              placeholder="请选择有效结束日期"></el-date-picker>
+            </el-form-item>
+            <el-form-item :label="$t('sls.t_7')"
+                          style="padding: 0">
+              <el-switch v-model="TableData.ENABLED"
+                         :active-text="$t('sls.yes')"
+                         :inactive-text="$t('sls.no')"
+                         active-color="#13ce66"
+                         inactive-color="#cccccc"
+                         active-value="Y"
+                         inactive-value="N" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+      </el-form>
+      <div slot="footer"
+           class="dialog-footer">
+        <el-button @click="cancel('form')">{{ $t("se.cancel") }}</el-button>
+        <el-button v-if="dialogStatus == 'create'"
+                   type="primary"
+                   @click="create('form')">{{ $t("se.confirm") }}</el-button>
+        <el-button v-else
+                   type="primary"
+                   @click="update('form')">
+          {{ $t("se.confirm") }}
+        </el-button>
+      </div>
+    </el-dialog>
+  </d2-container>
+</template>
+<script>
+import helper from '@/api/SfcsDisableComponents'
+import pagination from '@/views/mixin/page'
+import customContainerHeader from '@/components/custom-container-header'
+const API = helper('SfcsDisableComponents')
+export default {
+  name: 'SfcsDisableComponents',
+  mixins: [pagination],
+  components: {
+    customContainerHeader
+  },
+  data () {
+    return {
+      formData: {
+        WO_NO: '',
+        CUSTOMER_COMPONENT_PN: '',
+        DISABLE_COMPONENT_PN: '',
+        Key: '',
+        Page: 1,
+        Limit: 15
+      },
+      loading: false,
+      mainTable: [],
+      totalPage: 0,
+      dialogStatus: '',
+      validRules: {
+
+      },
+      formRemov: {
+        removeRecords: []
+      },
+      form: {
+        insertRecords: [],
+        updateRecords: []
+      },
+      TableData: {
+        ID: 0,
+        WO_NO: '',
+        CUSTOMER_COMPONENT_PN: '',
+        DISABLE_COMPONENT_PN: '',
+        ENABLED: 'N',
+        BEGIN_DATE: '',
+        END_DATE: '',
+        CREATEUSER: '',
+        UPDATEUSER: '',
+        CREATEDATE: '',
+        UPDATEDATE: ''
+      },
+      textMap: {
+        update: this.$t('se.editPermission'),
+        create: this.$t('se.create')
+      },
+      rules: {
+        WO_NO: [{ required: true, message: '请输入工单号', trigger: 'blur' }],
+        CUSTOMER_COMPONENT_PN: [{ required: true, message: '请输入产品料号', trigger: 'blur' }],
+        DISABLE_COMPONENT_PN: [{ required: true, message: '请输入禁用料号', trigger: 'blur' }],
+        CREATEUSER: [{ required: true, message: '请输入创建人', trigger: 'blur' }]
+      },
+      dialogFormVisible: false
+    }
+  },
+  created () {
+    this.getIndex()
+  },
+  methods: {
+
+    descripClick (e) {
+      this.TableData.VENDOR_CODE = e
+    },
+    async getIndex () {
+      const res = await API.Index()
+      if (res.Result) {
+        this.getLoadData()
+      }
+    },
+    async getLoadData () {
+      this.loading = true
+      const res = await API.LoadData(this.formData)
+      this.mainTable = res.Result
+      console.log(this.mainTable, '获取表格')
+      this.totalPage = res.TotalCount
+      this.loading = false
+    },
+    handleSize (val) {
+      this.formData.Limit = val
+      this.getLoadData()
+    },
+    handleCurrent (val) {
+      this.formData.Page = val
+      this.getLoadData()
+    },
+    // 搜索
+    searchClick () {
+      this.getLoadData()
+    },
+    // 新增
+    async insertEvent (row) {
+      this.empty()
+      this.dialogStatus = 'create'
+      this.dialogFormVisible = true
+    },
+    // 编辑
+    editBut (row) {
+      this.empty()
+      this.TableData.ID = row.ID
+      this.TableData.WO_NO = row.WO_NO
+      this.TableData.CUSTOMER_COMPONENT_PN = row.CUSTOMER_COMPONENT_PN
+      this.TableData.DISABLE_COMPONENT_PN = row.DISABLE_COMPONENT_PN
+      this.TableData.ENABLED = row.ENABLED
+      this.TableData.BEGIN_DATE = row.BEGIN_DATE
+      this.TableData.END_DATE = row.END_DATE
+      this.TableData.CREATEUSER = row.CREATEUSER
+      this.TableData.UPDATEUSER = row.UPDATEUSER
+      this.TableData.CREATEDATE = row.CREATEDATE
+      this.TableData.UPDATEDATE = row.UPDATEDATE
+      this.dialogFormVisible = true
+      this.dialogStatus = 'update'
+      console.log(row)
+    },
+    // 取消
+    cancel (formName) {
+      this.dialogFormVisible = false
+      this.$refs.TableData.resetFields()
+    },
+    // 确认
+    create (formName) {
+      this.submit_but(formName)
+    },
+    // 编辑
+    update (formName) {
+      this.submit_but(formName)
+    },
+    // 确认提交
+    async submit_but (formName) {
+      this.form.insertRecords = []
+      this.form.updateRecords = []
+      if (this.TableData.ID === 0) {
+        this.form.insertRecords.push(this.TableData)
+      } else {
+        this.form.updateRecords.push(this.TableData)
+      }
+      this.$refs.TableData.validate(async (valid, errInfo) => {
+        if (valid) {
+          if (
+            this.TableData.BEGIN_DATE &&
+            this.TableData.END_DATE &&
+            this.TableData.END_DATE <= this.TableData.BEGIN_DATE
+          ) {
+            this.TableData.END_DATE = ''
+            this.$message({
+              showClose: true,
+              message: '有效结束时间不能小于有效起始时间，请重新选择',
+              type: 'warning'
+            })
+            return
+          }
+          const res = await API.SaveData(this.form)
+          if (res.Result) {
+            this.dialogFormVisible = false
+            this.getLoadData()
+            this.$notify({
+              title: this.$t('se.success'),
+              message: this.$t('se.savedsus'),
+              type: 'success',
+              duration: 2000
+            })
+          }
+        } else {
+          try {
+            Object.keys(errInfo).forEach((item) => {
+              this.$message.error(errInfo[item][0].message)
+              throw new Error(errInfo[item][0].message)
+            })
+          } catch (e) { }
+        }
+      })
+    },
+    // 删除
+    async removeClick (row) {
+      console.log(row)
+      if (row) {
+        this.$confirm(this.$t('sls.fidelete'), this.$t('sls.prompt'), {
+          confirmButtonText: this.$t('sls.confirm'),
+          cancelButtonText: this.$t('sls.cancel'),
+          type: 'warning'
+        })
+          .then(async () => {
+            if (row.ID === 0) {
+              this.$refs.xTable.remove(row)
+              this.$notify({
+                title: this.$t('sls.success'),
+                message: this.$t('sls.sudeleted'),
+                type: 'success',
+                duration: 2000
+              })
+            } else {
+              this.$refs.xTable.remove(row)
+              var postdata = this.$refs.xTable.getRecordset()
+              this.formRemov.removeRecords = postdata.removeRecords
+              API.SaveData(this.formRemov).then((response) => {
+                if (response.Result) {
+                  this.formRemov = {}
+                  this.$notify({
+                    title: this.$t('sls.success'),
+                    message: this.$t('sls.sudeleted'),
+                    type: 'success',
+                    duration: 2000
+                  })
+                }
+                this.getLoadData()
+              })
+            }
+          })
+          .catch(() => { })
+      }
+    },
+    empty () {
+      this.TableData = {
+        ID: 0,
+        WO_NO: '',
+        CUSTOMER_COMPONENT_PN: '',
+        DISABLE_COMPONENT_PN: '',
+        ENABLED: 'N',
+        BEGIN_DATE: '',
+        END_DATE: '',
+        CREATEUSER: this.$store.getters.userinfo.USER_NAME,
+        UPDATEUSER: this.$store.getters.userinfo.USER_NAME,
+        CREATEDATE: '2021-05-05 00:00:00',
+        UPDATEDATE: '2021-05-05 00:00:00'
+      }
+    }
+  }
+}
+</script>
+<style lang="scss" scoped>
+.SmtLineSubstitute {
+  .SmtLineSubstitute-tanble-dev {
+    height: calc(100vh - 2.1rem);
+  }
+  .dialog-tanble {
+    height: calc(100vh - 5rem);
+  }
+}
+.select-flex {
+  display: flex;
+  justify-content: space-around;
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: #fff;
+  z-index: 999;
+}
+</style>
+<style>
+.select-pagination {
+  position: sticky;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  z-index: 9999999;
+  background: #fff;
+}
+.Dialog .el-form--label-top .el-form-item__label {
+  padding: 0px;
+}
+</style>

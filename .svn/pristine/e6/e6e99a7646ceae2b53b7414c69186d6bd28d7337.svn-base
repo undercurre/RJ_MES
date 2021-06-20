@@ -1,0 +1,284 @@
+* {
+  padding: 0;
+  margin: 0;
+}
+
+html {
+  width: 100%;
+  height: 100%;
+}
+
+.HiMaterial {
+  position: absolute;
+  height: 100vh;
+  width: 100vw;
+  top: 0;
+  left: 0;
+  overflow: hidden;
+  color: white;
+  font-family: 'Microsoft YaHei';
+  background-color: #040f3c;
+  background-size: 100% 100%;
+}
+
+.container-fluid {
+  width: 100%;
+  height: 100%;
+  padding: 0 20px;
+}
+
+.kanban-panel-bg {
+  /*background-color: rgb(18, 41, 114);
+  opacity: 0.8;*/
+  position: relative;
+  border: 1px solid #54dcf2;
+}
+
+.kanban-panel-bg span.border-span,
+.kanban-wo-info-panel span.border-span {
+  display: block;
+  position: absolute;
+  width: 35px;
+  height: 35px;
+}
+
+.kanban-panel-bg span.border-span-m,
+.kanban-wo-info-panel span.border-span-m {
+  display: block;
+  position: absolute;
+  width: 16px;
+  height: 16px;
+}
+
+.kanban-panel-bg span.top-left,
+.kanban-wo-info-panel span.top-left {
+  top: -4px;
+  left: -4px;
+  border-top: 3px solid #54dcf2;
+  border-left: 3px solid #54dcf2;
+}
+
+.kanban-panel-bg span.top-right,
+.kanban-wo-info-panel span.top-right {
+  top: -4px;
+  right: -4px;
+  border-top: 3px solid #54dcf2;
+  border-right: 3px solid #54dcf2;
+}
+
+.kanban-panel-bg span.bottom-left,
+.kanban-wo-info-panel span.bottom-left {
+  bottom: -4px;
+  left: -4px;
+  border-bottom: 3px solid #54dcf2;
+  border-left: 3px solid #54dcf2;
+}
+
+.kanban-panel-bg span.bottom-right,
+.kanban-wo-info-panel span.bottom-right {
+  bottom: -4px;
+  right: -4px;
+  border-bottom: 3px solid #54dcf2;
+  border-right: 3px solid #54dcf2;
+}
+
+.kanban-title {
+  text-align: center;
+  font-size: 25px;
+  height: 70px;
+  line-height: 70px;
+  background: url('../../../assets/images/header_bg.png') center center no-repeat;
+  background-size: cover;
+}
+
+.screen-span {
+  height: 50px;
+  width: 80px;
+}
+
+.kanban-title-panel {
+  /*background-color: #FFFFCC;
+  border-radius: 0 0 100px 100px;*/
+  height: 100%;
+  color: #00ffff;
+}
+
+.kanban-wo-info {
+  text-align: center;
+  font-size: 16px;
+  height: 40px;
+  padding: 10px 0 15px 0;
+}
+
+.kanban-wo-info-panel {
+  position: relative;
+  border: 1px solid #54dcf2;
+  width: 100%;
+  height: 100%;
+  line-height: 40px;
+}
+
+.kanban-row2 {
+  height: 50%;
+}
+
+.kanban-wo-yield-panel {
+  width: 100%;
+  height: 100%;
+  /*border-radius: 10px;*/
+}
+
+#WoYieldPie {
+  height: 100%;
+  padding: 10px;
+  height: calc(100% - 50px);
+  box-sizing: border-box;
+}
+
+.kanban-wo-site-panel {
+  height: 100%;
+  /*border-radius: 10px;*/
+}
+
+.kanban-row3 {
+  height: 50%;
+  padding: 20px 0;
+}
+
+.kanban-panel-title {
+  line-height: 50px;
+  font-size: 18px;
+  font-weight: bold;
+  color: white;
+  padding-left: 10px;
+  display: block;
+  height: 50px;
+  text-align: left;
+}
+
+.kanban-wo-info .div-title {
+  text-align: right;
+  padding-right: 0;
+}
+
+.kanban-wo-info .div-value {
+  text-align: left;
+  padding-left: 0;
+}
+
+.ListTable {
+  width: 100%;
+  padding: 0px;
+  margin: 0px;
+  background-color: transparent;
+  text-align: center;
+  table-layout: fixed;
+  font-size: 12px;
+}
+
+.ListTable .table>thead:first-child>tr:first-child>th {
+  text-align: center;
+  font-weight: bold;
+}
+
+.ListTable thead>tr>th {
+  vertical-align: bottom;
+  border-bottom: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  /*border-bottom: dotted 1px #eee;*/
+}
+
+.ListTable .table>tbody>tr>td {
+  border-top: none;
+  vertical-align: middle;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ListTable .table-striped>tbody>tr:nth-of-type(odd) {
+  background-color: #2b2b5b;
+}
+
+.swiper-pagination-bullet {
+  background: #FFF;
+}
+
+.swiper-container-horizontal>.swiper-pagination-bullets {
+  bottom: 0;
+}
+
+/*滚动条整体样式*/
+.materTableDiv::-webkit-scrollbar {
+  width: 10px;
+  /*高宽分别对应横竖滚动条的尺寸*/
+  height: 1px;
+}
+
+.materTableDiv::-webkit-scrollbar-thumb {
+  /*滚动条里面小方块*/
+  border-radius: 10px;
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+  background: #2b2b5b;
+}
+
+/*选项卡样式*/
+.layui-tab-title {
+  height: 50px;
+  line-height: 50px;
+  font-size: 18px;
+  font-weight: bold;
+  color: white;
+  padding-left: 10px;
+  display: block;
+  text-align: left;
+  border-bottom: dotted 1px #54dcf2;
+  margin: 0px;
+  padding: 0px;
+}
+
+.layui-tab-title li {
+  height: 48px;
+  line-height: 48px;
+}
+
+.layui-tab-title .layui-this:after {
+  border: dotted 1px #54dcf2;
+  height: 48px;
+  line-height: 48px;
+}
+
+.layui-tab-content {
+  padding: 0px;
+}
+
+#HiAddMaterialList tr {
+  width: 100%
+}
+
+
+.block {
+  width: 100%;
+  height: calc((100vh - 70px - 67px) / 3 - 15px);
+  box-sizing: border-box;
+  margin-bottom: 15px;
+}
+
+.block-center {
+  width: 100%;
+  height: calc((100vh - 70px - 67px) / 2 - 14px);
+  box-sizing: border-box;
+  margin-bottom: 15px;
+}
+
+.tit-btn {
+  color: #00ffff;
+  font-size: 15px;
+  text-decoration: none;
+  font-weight: bold;
+  display: block;
+  margin-bottom: 10px;
+  line-height: 1.5;
+}

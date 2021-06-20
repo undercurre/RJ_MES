@@ -1,0 +1,406 @@
+<template>
+  <d2-container class="run-card">
+    <template #header>
+      <custom-container-header class="header">
+        <span class="wo-no-label">{{ $t("RunCard.SN_LABEL") }}SN :</span>
+        <el-input class="wo-no-input"
+                  v-model="queryData.SN"
+                  :placeholder="$t('RunCard.SN_PLACEHOLDER')"
+                  @change="searching = false"
+                  clearable>
+        </el-input>
+         <el-button icon="el-icon-search"
+                   class="search-button"
+                   :disabled="searching"
+                   @click.stop="getRuncardInfoBySn('SN')">
+        </el-button>
+         <span class="wo-no-label" style="margin-left:30px">{{ $t("RunCard.SN_LABEL") }}UID :</span>
+        <el-input class="wo-no-input"
+                  v-model="queryData.UID"
+                  :placeholder="$t('RunCard.SN_PLACEHOLDER')"
+                  @change="searching = false"
+                  clearable>
+        </el-input>
+        <el-button icon="el-icon-search"
+                   class="search-button"
+                   :disabled="searching"
+                   @click.stop="getRuncardInfoBySn('UID')">
+        </el-button>
+        <el-button type="primary"
+                   plain
+                   icon="fa fa-file-excel-o"
+                   class="export-button"
+                   @click.stop="exportMultiSheetExcel">{{ $t("RunCard.EXPORT_LABEL") }}</el-button>
+      </custom-container-header>
+    </template>
+
+    <el-container class="run-card-body">
+      <el-header>
+        <el-form label-position="right"
+                 label-width="6rem"
+                 size="mini">
+          <el-row>
+            <el-col :span="8">
+              <el-form-item :label="$t('RunCard.SN_LABEL')">
+                <el-input v-model="formData.SN"
+                          readonly></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item :label="$t('RunCard.P_SN_LABEL')">
+                <el-input v-model="formData.PARENT_SN"
+                          readonly></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item :label="$t('RunCard.WO_NO_LABEL')">
+                <el-input v-model="formData.WO_NO"
+                          readonly></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="8">
+              <el-form-item :label="$t('RunCard.PN_LABEL')">
+                <el-input v-model="formData.PART_NO"
+                          readonly></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item :label="$t('RunCard.CUSTOMER_PN_LABEL')">
+                <el-input v-model="formData.CUSTOMER_PN"
+                          readonly></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item :label="$t('RunCard.CUSTOMER_LABEL')">
+                <el-input v-model="formData.CUSTOMER"
+                          readonly></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="8">
+              <el-form-item :label="$t('RunCard.MACHINE_CLASS_LABEL')">
+                <el-input v-model="formData.MODEL"
+                          readonly></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item :label="$t('RunCard.ZC_NAME_LABEL')">
+                <el-input v-model="formData.ROUTE_NAME"
+                          readonly></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item :label="$t('RunCard.CJ_LABEL')">
+                <el-input v-model="formData.SAMPLE_FLAG"
+                          readonly></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="8">
+              <el-form-item :label="$t('RunCard.LAST_JOB_STATION_LABEL')">
+                <el-input v-model="formData.CURRENT_SITE"
+                          readonly></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item :label="$t('RunCard.CARTOON_LABEL')">
+                <el-input v-model="formData.CARTON_NO"
+                          readonly></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item :label="$t('RunCard.LINE_BOARD_LABEL')">
+                <el-input v-model="formData.PALLET_NO"
+                          readonly></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="8">
+              <el-form-item :label="$t('RunCard.NEXT_JOB_LABEL')">
+                <el-input v-model="formData.WIP_ROUTE"
+                          readonly></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item :label="$t('RunCard.CURRENT_STATUS_LABEL')">
+                <el-input v-model="formData.RUNCARD_STATUS"
+                          readonly></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item :label="$t('RunCard.TIME_TO_PRO_LABEL')">
+                <el-input v-model="formData.INPUT_TIME"
+                          readonly></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+        </el-form>
+      </el-header>
+      <el-main>
+        <el-tabs v-model="activeTab">
+          <el-tab-pane :label="history.label"
+                       :name="history.name"
+                       v-for="history in histories"
+                       :key="history.name">
+            <run-card-history ref="histories"
+                              :namespace="history.name"
+                              :title="history.label"
+                              class="child-container"
+                              v-model="formData[history.name]" />
+          </el-tab-pane>
+        </el-tabs>
+      </el-main>
+    </el-container>
+    <template #footer>
+      <el-pagination :current-page="pageData.page"
+                     :page-size="pageData.limit"
+                     :page-sizes="[15, 25, 35, 45]"
+                     layout="total, sizes, prev, pager, next, jumper"
+                     :total="pageData.total"
+                     @size-change="handleSizeChange"
+                     @current-change="handleCurrentChange" />
+    </template>
+  </d2-container>
+</template>
+
+<script>
+import { getRuncardInfoBySn } from '@/api/RunCardReport'
+import CustomContainerHeader from '@/components/custom-container-header'
+import RunCardHistory from './components/RunCardHistory'
+export default {
+  name: 'RunCardReport',
+  components: {
+    CustomContainerHeader,
+    RunCardHistory
+  },
+  data () {
+    return {
+      activeTab: 'OPERATIONHISTORY',
+      searching: false,
+      queryData: {
+        SN: '',
+        UID: ''
+      },
+      formData: {
+        SN_ID: '',
+        SN: '',
+        PARENT_SN: '',
+        WO_NO: '',
+        PART_NO: '',
+        OEM_PN: '',
+        CUSTOMER_PN: '',
+        CUSTOMER: '',
+        MODEL: '',
+        ROUTE_ID: '',
+        ROUTE_NAME: '',
+        SAMPLE_FLAG: '',
+        CURRENT_SITE: '',
+        CARTON_NO: '',
+        PALLET_NO: '',
+        WIP_ROUTE: '',
+        RUNCARD_STATUS: '',
+        INPUT_TIME: ''
+      },
+      pageData: {
+        page: 1,
+        total: 0,
+        limit: 10
+      },
+      histories: [
+        {
+          label: '作业记录',
+          name: 'OPERATIONHISTORY'
+        },
+        {
+          label: '不良',
+          name: 'DEFECTHISTORY'
+        },
+        {
+          label: '测试记录',
+          name: 'TESTHISTORY'
+        },
+        {
+          label: '零件',
+          name: 'COMPONENTHISTORY'
+        },
+        {
+          label: '替换零件',
+          name: 'COMPREPLACEHISTORY'
+        },
+        {
+          label: '制程',
+          name: 'ROUTEHISTORY'
+        },
+        {
+          label: '返工前零件',
+          name: 'REWORKCOMPHISTORY'
+        },
+        {
+          label: 'UID',
+          name: 'UIDHISTORY'
+        },
+        {
+          label: '流水号替换记录',
+          name: 'REPLACERUNCARDHISTORY'
+        },
+        {
+          label: '资源',
+          name: 'RESOURCEHISTORY'
+        },
+        {
+          label: 'RMA',
+          name: 'RMAHISTORY'
+        },
+        {
+          label: '工单记录',
+          name: 'WOHISTORY'
+        },
+        {
+          label: '钢网',
+          name: 'STENCIL'
+        },
+        {
+          label: '刮刀',
+          name: 'SCRAPER'
+        },
+        {
+          label: '辅料',
+          name: 'RESOURCE'
+        },
+        {
+          label: '料卷信息',
+          name: 'SMTSNREEL'
+        }
+      ]
+    }
+  },
+  methods: {
+    handleSizeChange () {},
+    handleCurrentChange () {},
+    getRuncardInfoBySn (type) { // type SN  UID
+      if (!this.queryData[type]) {
+        this.$notify({
+          title: '错误操作',
+          message: '请先输入流水号进行查找',
+          type: 'warning'
+        })
+        return
+      }
+      this.searching = true
+      getRuncardInfoBySn(this.queryData[type], type).then((res) => {
+        if (res.Result === null) {
+          this.$notify({
+            title: '数据异常',
+            message: '输入的流水号不存在，请重新输入流水号',
+            type: 'error'
+          })
+          return
+        }
+        this.formData = res.Result
+        setTimeout(() => {
+          this.queryData.SN = ''
+          this.searching = false
+        }, 3000)
+      })
+    },
+    // 自定义多sheet excel 导出
+    async exportMultiSheetExcel () {
+      if (!this.formData.WO_NO) {
+        this.$notify({
+          title: '错误操作',
+          message: '请先输入流水号进行查找',
+          type: 'warning'
+        })
+      }
+      const excel = await import('./util')
+      /* original data */
+      const filename = `流程卡报表--${this.formData.SN}`
+      const sheets = []
+      this.$refs.histories.map(async history => {
+        if (!history.getSheet) {
+          return
+        }
+        let sheet = history.getSheet(excel)
+        sheets.push(sheet)
+      })
+      excel.exportMultiSheetExcel({
+        filename,
+        sheets
+      })
+    }
+  }
+}
+</script>
+
+<style scoped lang="scss">
+.run-card {
+  .header {
+    .wo-no-label {
+      font-size: 12px;
+    }
+    .wo-no-input {
+      margin-left: 10px;
+      width: 20rem;
+      ::v-deep .el-input__inner {
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+      }
+    }
+    .search-button {
+      margin-left: -10px;
+      border-radius: 0px 4px 4px 0px;
+      height: 32px;
+      border-left: none;
+    }
+    .export-button {
+      border: none;
+      ::v-deep i {
+        margin-right: 10px;
+      }
+    }
+  }
+  ::v-deep .d2-container-full__body {
+    padding: 0px 0px !important;
+  }
+  .run-card-body {
+    height: 100%;
+    .el-header {
+      background: #f1f1f1;
+      height: auto !important;
+      .el-form {
+        margin-top: 10px;
+        .el-col {
+          padding-right: 10px;
+        }
+      }
+    }
+    .el-main {
+      padding: 0px 20px;
+      background: #f7f7f7;
+      .el-tabs {
+        height: 100%;
+        overflow: hidden;
+        display: flex;
+        flex-flow: column;
+        ::v-deep .el-tabs__content {
+          overflow: auto;
+          flex: 1;
+        }
+        .el-tab-pane {
+          height: 100%;
+          overflow: hidden;
+          .child-container {
+            height: 100%;
+            overflow: hidden;
+          }
+        }
+      }
+    }
+  }
+}
+</style>
